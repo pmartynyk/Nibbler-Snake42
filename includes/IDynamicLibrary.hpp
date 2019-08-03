@@ -4,8 +4,7 @@
 class IDynamicLibrary
 {
 public:
-    IDynamicLibrary(void);
-    ~IDynamicLibrary(void);
+    virtual void DrowMap(int size) = 0;
 };
 
 #endif

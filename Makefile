@@ -3,13 +3,18 @@ NAME	= nibbler
 
 CLANG = clang++ -std=c++11
 
-FLAG	= -Wall -Wextra -Werror
+NCUR 	= -lncurses
 
-LIB	= Game.class.hpp
+FLAG	= -std=c++11 -Wall -Wextra -Werror 
+
+LIB	= Game.class.hpp\
+		IDynamiclibrary.hpp\
+		Ncurses.class.hpp
 
 SRC		= main.cpp\
-		Game.class.cpp
-
+		Game.class.cpp\
+		Ncurses.class.cpp
+		
 OBJ		= $(SRC:.cpp=.o)
 
 LIBS_DIR = ./includes/
@@ -31,7 +36,7 @@ $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp
 	@$(CLANG) $(FLAG) -c $< -o $@ -I$(LIBS_DIR)
 
 $(NAME): $(OBJF) $(LIBF)
-	@$(CLANG) $(FLAG) $(OBJF) -o $(NAME) 
+	@$(CLANG) $(FLAG) $(NCUR) $(OBJF) -o $(NAME) 
 	@echo "\033[32mDONE\032"
 
 clean:

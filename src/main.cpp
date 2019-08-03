@@ -1,5 +1,5 @@
 #include <iostream>
-#include "Game.class.hpp"
+#include "../includes/Game.class.hpp"
 
 int main(void)
 {
@@ -9,6 +9,7 @@ int main(void)
     if (size <= 75 && size >= 25)
     {   
         Game game(size);
+        game.play();
     }
     return 0;
 }
