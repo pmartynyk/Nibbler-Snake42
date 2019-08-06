@@ -1,7 +1,7 @@
 
 NAME	= nibbler
 
-CLANG = clang++ -std=c++11
+CLANG = clang++
 
 NCUR 	= -lncurses
 
@@ -9,11 +9,13 @@ FLAG	= -std=c++11 -Wall -Wextra -Werror
 
 LIB	= Game.class.hpp\
 		IDynamiclibrary.hpp\
-		Ncurses.class.hpp
+		Snake.class.hpp\
+		Unit.class.hpp
 
 SRC		= main.cpp\
 		Game.class.cpp\
-		Ncurses.class.cpp
+		Snake.class.cpp\
+		Unit.class.cpp
 		
 OBJ		= $(SRC:.cpp=.o)
 
@@ -35,16 +37,22 @@ mkdir:
 $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp 
 	@$(CLANG) $(FLAG) -c $< -o $@ -I$(LIBS_DIR)
 
-$(NAME): $(OBJF) $(LIBF)
-	@$(CLANG) $(FLAG) $(NCUR) $(OBJF) -o $(NAME) 
-	@echo "\033[32mDONE\032"
+$(NAME): $(OBJF) $(LIBF) ncur 
+	@$(CLANG) $(FLAG) $(OBJF) -o $(NAME) 
+	@echo "\033[32mDONE\033[39m"
+
+ncur:
+	@make -C ./ncurses/
+	@echo "\033[32mNcurses Builded\033[39m"
 
 clean:
 	@rm -f $(OBJ_DIR)*.o
 	@rm -rf $(OBJ_DIR)
+	@make -C ncurses clean
 
 fclean: clean
 	@/bin/rm -f $(NAME)
-	@echo "\033[32mCLEANED ALL\032"
+	@make -C ncurses fclean
+	@echo "\033[32mCLEANED ALL\033[39m"
 
 re: fclean all

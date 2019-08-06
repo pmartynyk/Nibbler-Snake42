@@ -1,20 +1,25 @@
 #ifndef NCURSES_CLASS_HPP
 #define NCURSES_CLASS_HPP
 
-#include "IDynamicLibrary.hpp"
+#include "../includes/IDynamicLibrary.hpp"
+#include "../includes/Snake.class.hpp"
 #include <ncurses.h>
 #include <iostream>
 
+// class Snake;
+
 class Ncurses : public IDynamicLibrary
 {
-private:
-
 public:
     Ncurses(void);
     Ncurses(Ncurses const &val);
     Ncurses &operator=(Ncurses const &val);
     ~Ncurses(void);
-    void DrowMap(int size);
+
+    void DrowMap(int size) const;
+    void fillMap(int size) const;
+
+    void DrawSnake(Snake &snake);
 };
 
 #endif
