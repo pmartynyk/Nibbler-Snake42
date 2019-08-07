@@ -9,7 +9,8 @@ FLAG	= -std=c++11 -Wall -Wextra -Werror
 
 LIB		= Ncurses.class.hpp
 
-SRC		= ../src/Snake.class.cpp\
+SRC		= ../src/Game.class.cpp\
+		../src/Snake.class.cpp\
 		../src/Unit.class.cpp\
 		Ncurses.class.cpp
 		

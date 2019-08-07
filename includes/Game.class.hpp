@@ -6,13 +6,13 @@
 #include "IDynamicLibrary.hpp"
 #include "Snake.class.hpp"
 
-enum Direction
-{
-    right,
-    left,
-    up,
-    down
-};
+// enum Direction
+// {
+//     right,
+//     left,
+//     up,
+//     down
+// };
 
 class Game
 {
@@ -21,7 +21,9 @@ private:
     IDynamicLibrary *_library;
     bool _endGame;
     void *_dl;
+    int _fps;
     Snake _snake;
+    Direction _direction;
 
 public:
     Game(int size);

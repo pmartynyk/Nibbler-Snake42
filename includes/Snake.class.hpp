@@ -19,11 +19,9 @@ public:
     Snake(void);
     Snake(Snake const &val);
     Snake &operator=(Snake const &val);
-    // Snake *operator&();
-    // const Snake *operator&() const;
     ~Snake(void);
 
-    void setData(int x, int y);
+    void setData(int x, int y, int length);
     std::list<Unit*> &getUnits(void);
 
     int getLength(void);

@@ -1,5 +1,4 @@
 #include "../includes/Snake.class.hpp"
-// #include "../includes/Unit.class.hpp"
 
 Snake::Snake(void)
 {
@@ -27,19 +26,19 @@ Snake::~Snake(void)
 {
 }
 
-void Snake::setData(int x, int y)
+void Snake::setData(int x, int y, int length)
 {
     this->_x = x;
     this->_y = y;
     int i = 0;
-    // while (i < length)
-    // {
-    //     this->_units.push_back(new Unit(x, y - i));
-    //     // this->_units.front()->setHead();
-    //     // std::cout << this->_units << std::endl;
-    //     i++;
-    // }
-    this->_length = i;
+    while (i < length)
+    {
+        this->_units.push_back(new Unit(x, y - i));
+        // this->_units.front()->setHead();
+        // std::cout << i << std::endl;
+        i++;
+    }
+    this->_units.front()->setHead();
 }
 
 std::list<Unit *> &Snake::getUnits(void)
@@ -51,13 +50,3 @@ int Snake::getLength(void)
 {
     return this->_length;
 }
-
-// Snake *Snake::operator&()
-// {
-//     return this;
-// }
-
-// Snake const *Snake::operator&() const
-// {
-//     return this;
-// }

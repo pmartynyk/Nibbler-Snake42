@@ -47,6 +47,7 @@ ncur:
 
 clean:
 	@rm -f $(OBJ_DIR)*.o
+	@rm -f $(SRC_DIR)*.o
 	@rm -rf $(OBJ_DIR)
 	@make -C ncurses clean
 

@@ -3,11 +3,23 @@
 
 class Snake;
 
+enum Direction
+{
+    right,
+    left,
+    up,
+    down
+};
+
 class IDynamicLibrary
 {
 public:
-    virtual void DrowMap(int size) const = 0;
-    virtual void DrawSnake(Snake &snake)  = 0;
+    virtual void draw(Snake &snake, Direction direction, int size) = 0;
+    virtual Direction checkButton(Direction direction) = 0;
+
+
+    // virtual void DrowMap(int size) const = 0;
+    // virtual void DrawSnake(Snake &snake)  = 0;
 };
 
 #endif

@@ -16,10 +16,15 @@ public:
     Ncurses &operator=(Ncurses const &val);
     ~Ncurses(void);
 
-    void DrowMap(int size) const;
-    void fillMap(int size) const;
+    void draw(Snake &snake, Direction direction, int size);
 
-    void DrawSnake(Snake &snake);
+    void drowMap(Snake &snake, int size);
+    void fillMap(Snake &snake, int size);
+    bool notSnake(Snake &snake, int i, int j);
+    void drawSnake(Snake &snake);
+    void moveSnake(Snake &snake, Direction direction);
+
+    Direction checkButton(Direction direction);
 };
 
 #endif
