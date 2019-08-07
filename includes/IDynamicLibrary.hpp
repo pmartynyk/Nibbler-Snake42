@@ -14,8 +14,8 @@ enum Direction
 class IDynamicLibrary
 {
 public:
-    virtual void draw(Snake &snake, Direction direction, int size) = 0;
-    virtual Direction checkButton(Direction direction) = 0;
+    virtual void draw(Snake &snake, Direction direction, int size, bool &endGame) = 0;
+    virtual Direction checkButton(Direction direction, bool &endGame) = 0;
 
 
     // virtual void DrowMap(int size) const = 0;

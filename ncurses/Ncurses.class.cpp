@@ -26,11 +26,15 @@ Ncurses::~Ncurses(void)
 {
 }
 
-void Ncurses::draw(Snake &snake, Direction direction, int size)
+void Ncurses::draw(Snake &snake, Direction direction, int size, bool &endGame)
 {
-    this->drowMap(snake, size);
-    this->drawSnake(snake);
     this->moveSnake(snake, direction);
+    this->drowMap(snake, size);
+    this->checkCollision(snake, endGame, size);
+    if (endGame)
+        endwin();
+    else
+        this->drawSnake(snake);
 }
 
 void Ncurses::drowMap(Snake &snake, int size)
@@ -46,7 +50,6 @@ void Ncurses::drowMap(Snake &snake, int size)
     init_pair(2, COLOR_RED, COLOR_BLACK);
     init_pair(3, COLOR_GREEN, COLOR_BLACK);
     refresh();
-    // resizeterm(size, size);
     wresize(stdscr, size, size);
 
     box(stdscr, 0, 0);
@@ -91,6 +94,10 @@ void Ncurses::drawSnake(Snake &snake)
 {
     std::list<Unit *>::const_iterator it;
     std::list<Unit *>::const_iterator ite = snake.getUnits().end();
+    // for (it = snake.getUnits().begin(); it != ite; ++it)
+    // {
+    //     mvprintw((*it)->getY(), (*it)->getX(), ".");
+    // }    
     for (it = snake.getUnits().begin(); it != ite; ++it)
     {
         if ((*it)->isHead())
@@ -99,7 +106,6 @@ void Ncurses::drawSnake(Snake &snake)
             mvprintw((*it)->getY(), (*it)->getX(), "@");
             attroff(COLOR_PAIR(2));
         }
-
         else
         {
             attron(COLOR_PAIR(1));
@@ -153,7 +159,7 @@ void Ncurses::moveSnake(Snake &snake, Direction direction)
     }
 }
 
-Direction Ncurses::checkButton(Direction direction)
+Direction Ncurses::checkButton(Direction direction, bool &endGame)
 {
     int c;
 
@@ -166,5 +172,27 @@ Direction Ncurses::checkButton(Direction direction)
         return left;
     else if (c == KEY_RIGHT && direction != left)
         return right;
+    else if (c == 27)
+        endGame = true;
     return direction;
+}
+
+void Ncurses::checkCollision(Snake &snake, bool &endGame, int size)
+{
+    std::list<Unit *>::const_iterator head = snake.getUnits().begin();
+    if ((*head)->getX() < 1 || (*head)->getY() < 1 || (*head)->getX() >= size - 1 || (*head)->getY() >= size - 1)
+        endGame = true;
+    std::list<Unit *>::const_iterator it;
+    std::list<Unit *>::const_iterator ite = snake.getUnits().end();
+    for (it = snake.getUnits().begin(); it != ite; ++it)
+    {
+        if (!(*it)->isHead())
+        {
+            if ((*head)->getX() == (*it)->getX() && (*head)->getY() == (*it)->getY())
+            {
+                endGame = true;
+                return ;
+            }
+        }
+    }
 }

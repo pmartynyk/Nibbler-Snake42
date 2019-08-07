@@ -34,8 +34,6 @@ void Snake::setData(int x, int y, int length)
     while (i < length)
     {
         this->_units.push_back(new Unit(x, y - i));
-        // this->_units.front()->setHead();
-        // std::cout << i << std::endl;
         i++;
     }
     this->_units.front()->setHead();

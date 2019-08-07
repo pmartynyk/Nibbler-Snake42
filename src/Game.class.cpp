@@ -35,13 +35,13 @@ void Game::play(void)
     clock_t t2 = 0;
     selectLib();
     this->_snake.setData(this->_size / 2, this->_size / 2, 4);
-    while (1)
+    while (!this->_endGame)
     {
         t1 = clock() / (CLOCKS_PER_SEC / _fps);
         if (t1 > t2)
         {
-            this->_library->draw(this->_snake, this->_direction, this->_size);
-            this->_direction = this->_library->checkButton(this->_direction);
+            this->_direction = this->_library->checkButton(this->_direction, this->_endGame);
+            this->_library->draw(this->_snake, this->_direction, this->_size, this->_endGame);
             t2 = clock() / (CLOCKS_PER_SEC / _fps);
         }
     }
