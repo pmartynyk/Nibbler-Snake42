@@ -158,13 +158,13 @@ Direction Ncurses::checkButton(Direction direction)
     int c;
 
     c = getch();
-    if (c == KEY_DOWN)
+    if (c == KEY_DOWN && direction != up)
         return down;
-    else if (c == KEY_UP)
+    else if (c == KEY_UP && direction != down)
         return up;
-    else if (c == KEY_LEFT)
+    else if (c == KEY_LEFT && direction != right)
         return left;
-    else if (c == KEY_RIGHT)
+    else if (c == KEY_RIGHT && direction != left)
         return right;
     return direction;
 }
