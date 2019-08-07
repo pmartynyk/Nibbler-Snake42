@@ -5,14 +5,8 @@
 #include <dlfcn.h>
 #include "IDynamicLibrary.hpp"
 #include "Snake.class.hpp"
-
-// enum Direction
-// {
-//     right,
-//     left,
-//     up,
-//     down
-// };
+#include "Food.class.hpp"
+#include <random>
 
 class Game
 {
@@ -23,6 +17,7 @@ private:
     void *_dl;
     int _fps;
     Snake _snake;
+    Food _food;
     Direction _direction;
 
 public:

@@ -12,6 +12,7 @@ LIB		= Ncurses.class.hpp
 SRC		= ../src/Game.class.cpp\
 		../src/Snake.class.cpp\
 		../src/Unit.class.cpp\
+		../src/Food.class.cpp\
 		Ncurses.class.cpp
 		
 OBJ		= $(SRC:.cpp=.o)

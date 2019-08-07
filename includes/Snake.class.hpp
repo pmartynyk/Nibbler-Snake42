@@ -23,6 +23,7 @@ public:
 
     void setData(int x, int y, int length);
     std::list<Unit*> &getUnits(void);
+    void addUnit(void);
 
     int getLength(void);
 };

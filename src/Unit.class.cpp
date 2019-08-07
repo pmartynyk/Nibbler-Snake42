@@ -40,15 +40,15 @@ int Unit::getY(void)
     return this->_y;
 }
 
-int Unit::getPrevX(void)
-{
-    return this->_prevx;
-}
+// int Unit::getPrevX(void)
+// {
+//     return this->_prevx;
+// }
 
-int Unit::getPrevY(void)
-{
-    return this->_prevy;
-}
+// int Unit::getPrevY(void)
+// {
+//     return this->_prevy;
+// }
 
 bool Unit::isHead(void)
 {
@@ -65,12 +65,12 @@ void Unit::setY(int y)
     this->_y = y;
 }
 
-void Unit::setPrevX(int x)
-{
-    this->_prevx = x;
-}
+// void Unit::setPrevX(int x)
+// {
+//     this->_prevx = x;
+// }
 
-void Unit::setPrevY(int y)
-{
-    this->_prevy = y;
-}
+// void Unit::setPrevY(int y)
+// {
+//     this->_prevy = y;
+// }

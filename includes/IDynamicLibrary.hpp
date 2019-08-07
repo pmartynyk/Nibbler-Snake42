@@ -2,6 +2,7 @@
 # define IDYNAMICLIBRARY_HPP
 
 class Snake;
+class Food;
 
 enum Direction
 {
@@ -14,7 +15,7 @@ enum Direction
 class IDynamicLibrary
 {
 public:
-    virtual void draw(Snake &snake, Direction direction, int size, bool &endGame) = 0;
+    virtual void draw(Snake &snake, Direction direction, int size, bool &endGame, Food &food) = 0;
     virtual Direction checkButton(Direction direction, bool &endGame) = 0;
 
 

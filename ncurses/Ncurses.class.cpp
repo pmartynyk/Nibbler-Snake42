@@ -26,11 +26,13 @@ Ncurses::~Ncurses(void)
 {
 }
 
-void Ncurses::draw(Snake &snake, Direction direction, int size, bool &endGame)
+void Ncurses::draw(Snake &snake, Direction direction, int size, bool &endGame, Food &food)
 {
     this->moveSnake(snake, direction);
     this->drowMap(snake, size);
+    this->drowFood(snake, food, size);
     this->checkCollision(snake, endGame, size);
+    this->checkFood(snake, food);
     if (endGame)
         endwin();
     else
@@ -49,6 +51,7 @@ void Ncurses::drowMap(Snake &snake, int size)
     init_pair(1, COLOR_CYAN, COLOR_BLACK);
     init_pair(2, COLOR_RED, COLOR_BLACK);
     init_pair(3, COLOR_GREEN, COLOR_BLACK);
+    init_pair(4, COLOR_YELLOW, COLOR_BLACK);
     refresh();
     wresize(stdscr, size, size);
 
@@ -76,6 +79,37 @@ void Ncurses::fillMap(Snake &snake, int size)
     refresh();
 }
 
+void Ncurses::drowFood(Snake &snake, Food &food, int size)
+{
+    if (!food.isAlive())
+    {
+        srand(time(0));
+        food.setAlive(true);
+        int tmpX;
+        int tmpY;
+        tmpX = rand() % (size - 1) + 1;
+        tmpY = rand() % (size - 1) + 1;
+
+        tmpX = ((tmpX <= 1 || tmpX >= size - 1) ? size / 4 : tmpX);
+        tmpY = ((tmpY <= 1 || tmpY >= size - 1) ? size / 2 : tmpY);
+        if (!notSnake(snake, tmpX, tmpY))
+        {
+            tmpX = rand() % (size - 1) + 1;
+            tmpY = rand() % (size - 1) + 1;
+        }
+        food.setCord(tmpX, tmpY);
+        attron(COLOR_PAIR(4));
+        mvprintw(food.getY(), food.getX(), "o");
+        attroff(COLOR_PAIR(4));
+    }
+    else
+    {
+        attron(COLOR_PAIR(4));
+        mvprintw(food.getY(), food.getX(), "o");
+        attroff(COLOR_PAIR(4));
+    }
+}
+
 bool Ncurses::notSnake(Snake &snake, int i, int j)
 {
     std::list<Unit *>::const_iterator it;
@@ -94,10 +128,6 @@ void Ncurses::drawSnake(Snake &snake)
 {
     std::list<Unit *>::const_iterator it;
     std::list<Unit *>::const_iterator ite = snake.getUnits().end();
-    // for (it = snake.getUnits().begin(); it != ite; ++it)
-    // {
-    //     mvprintw((*it)->getY(), (*it)->getX(), ".");
-    // }    
     for (it = snake.getUnits().begin(); it != ite; ++it)
     {
         if ((*it)->isHead())
@@ -112,6 +142,8 @@ void Ncurses::drawSnake(Snake &snake)
             mvprintw((*it)->getY(), (*it)->getX(), "@");
             attroff(COLOR_PAIR(1));
         }
+        // std::string c = std::to_string(snake.getUnits().size());
+        // mvprintw(1, 1, c.c_str());
     }
     refresh();
 }
@@ -159,6 +191,22 @@ void Ncurses::moveSnake(Snake &snake, Direction direction)
     }
 }
 
+void Ncurses::checkFood(Snake &snake, Food &food)
+{
+    std::list<Unit *>::const_iterator head = snake.getUnits().begin();
+
+    // static int k = 0;
+    // std::string c = std::to_string(k);
+    // mvprintw(1, 1, c.c_str());
+    if (food.getX() == (*head)->getX() && food.getY() == (*head)->getY())
+    {
+        food.setAlive(false);
+        // snake.addUnit();
+
+        // k++;
+    }
+}
+
 Direction Ncurses::checkButton(Direction direction, bool &endGame)
 {
     int c;
@@ -191,7 +239,7 @@ void Ncurses::checkCollision(Snake &snake, bool &endGame, int size)
             if ((*head)->getX() == (*it)->getX() && (*head)->getY() == (*it)->getY())
             {
                 endGame = true;
-                return ;
+                return;
             }
         }
     }

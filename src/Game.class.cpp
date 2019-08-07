@@ -31,17 +31,19 @@ int Game::getSize(void)
 
 void Game::play(void)
 {
+    (void)_direction;
     clock_t t1;
     clock_t t2 = 0;
     selectLib();
     this->_snake.setData(this->_size / 2, this->_size / 2, 4);
+    srand(time(0));
     while (!this->_endGame)
     {
         t1 = clock() / (CLOCKS_PER_SEC / _fps);
         if (t1 > t2)
         {
             this->_direction = this->_library->checkButton(this->_direction, this->_endGame);
-            this->_library->draw(this->_snake, this->_direction, this->_size, this->_endGame);
+            this->_library->draw(this->_snake, this->_direction, this->_size, this->_endGame, this->_food);
             t2 = clock() / (CLOCKS_PER_SEC / _fps);
         }
     }

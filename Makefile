@@ -10,12 +10,14 @@ FLAG	= -std=c++11 -Wall -Wextra -Werror
 LIB	= Game.class.hpp\
 		IDynamiclibrary.hpp\
 		Snake.class.hpp\
-		Unit.class.hpp
+		Unit.class.hpp\
+		Food.class.hpp
 
 SRC		= main.cpp\
 		Game.class.cpp\
 		Snake.class.cpp\
-		Unit.class.cpp
+		Unit.class.cpp\
+		Food.class.cpp
 		
 OBJ		= $(SRC:.cpp=.o)
 
