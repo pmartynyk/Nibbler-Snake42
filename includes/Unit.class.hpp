@@ -8,8 +8,8 @@ class Unit
 private:
     int _x;
     int _y;
-    // int _prevx;
-    // int _prevy;
+    int _prevx;
+    int _prevy;
     bool _head;
 
 public:
@@ -21,15 +21,15 @@ public:
 
     int getX(void);
     int getY(void);
-    // int getPrevX(void);
-    // int getPrevY(void);
+    int getPrevX(void);
+    int getPrevY(void);
 
     bool isHead(void);
 
     void setX(int);
     void setY(int);
-    // void setPrevX(int);
-    // void setPrevY(int);
+    void setPrevX(int);
+    void setPrevY(int);
 };
 
 #endif

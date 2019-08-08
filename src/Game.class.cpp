@@ -36,9 +36,10 @@ void Game::play(void)
     clock_t t2 = 0;
     selectLib();
     this->_snake.setData(this->_size / 2, this->_size / 2, 4);
-    srand(time(0));
+    srand((int)time(0));
     while (!this->_endGame)
     {
+        
         t1 = clock() / (CLOCKS_PER_SEC / _fps);
         if (t1 > t2)
         {

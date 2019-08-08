@@ -29,10 +29,11 @@ Ncurses::~Ncurses(void)
 void Ncurses::draw(Snake &snake, Direction direction, int size, bool &endGame, Food &food)
 {
     this->moveSnake(snake, direction);
+    this->checkFood(snake, food);
     this->drowMap(snake, size);
     this->drowFood(snake, food, size);
     this->checkCollision(snake, endGame, size);
-    this->checkFood(snake, food);
+
     if (endGame)
         endwin();
     else
@@ -83,20 +84,20 @@ void Ncurses::drowFood(Snake &snake, Food &food, int size)
 {
     if (!food.isAlive())
     {
-        srand(time(0));
-        food.setAlive(true);
         int tmpX;
         int tmpY;
-        tmpX = rand() % (size - 1) + 1;
-        tmpY = rand() % (size - 1) + 1;
+        tmpX = rand() % (size - 2) + 1;
+        tmpY = rand() % (size - 2) + 1;
 
-        tmpX = ((tmpX <= 1 || tmpX >= size - 1) ? size / 4 : tmpX);
-        tmpY = ((tmpY <= 1 || tmpY >= size - 1) ? size / 2 : tmpY);
-        if (!notSnake(snake, tmpX, tmpY))
+        food.setAlive(true);
+
+        while (!notSnake(snake, tmpY, tmpX))
         {
-            tmpX = rand() % (size - 1) + 1;
-            tmpY = rand() % (size - 1) + 1;
+            tmpX = rand() % (size - 2) + 1;
+            tmpY = rand() % (size - 2) + 1;
         }
+        // tmpX = ((tmpX <= 1 || tmpX >= size - 1) ? size / 4 : tmpX);
+        // tmpY = ((tmpY <= 1 || tmpY >= size - 1) ? size / 2 : tmpY);
         food.setCord(tmpX, tmpY);
         attron(COLOR_PAIR(4));
         mvprintw(food.getY(), food.getX(), "o");
@@ -142,8 +143,6 @@ void Ncurses::drawSnake(Snake &snake)
             mvprintw((*it)->getY(), (*it)->getX(), "@");
             attroff(COLOR_PAIR(1));
         }
-        // std::string c = std::to_string(snake.getUnits().size());
-        // mvprintw(1, 1, c.c_str());
     }
     refresh();
 }
@@ -183,6 +182,8 @@ void Ncurses::moveSnake(Snake &snake, Direction direction)
         {
             tmpX = (*it)->getX();
             tmpY = (*it)->getY();
+            (*it)->setPrevX(tmpX);
+            (*it)->setPrevY(tmpY);
             (*it)->setX(tmp1X);
             (*it)->setY(tmp1Y);
         }
@@ -195,15 +196,10 @@ void Ncurses::checkFood(Snake &snake, Food &food)
 {
     std::list<Unit *>::const_iterator head = snake.getUnits().begin();
 
-    // static int k = 0;
-    // std::string c = std::to_string(k);
-    // mvprintw(1, 1, c.c_str());
     if (food.getX() == (*head)->getX() && food.getY() == (*head)->getY())
     {
         food.setAlive(false);
-        // snake.addUnit();
-
-        // k++;
+        snake.addUnit();
     }
 }
 

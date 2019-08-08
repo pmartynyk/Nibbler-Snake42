@@ -52,6 +52,6 @@ int Snake::getLength(void)
 void Snake::addUnit(void)
 {
     Unit *tmp = this->_units.back();
-    this->_units.push_back(new Unit(tmp->getX(), tmp->getY()));
-    delete tmp;
+    this->_units.push_back(new Unit(tmp->getPrevX(), tmp->getPrevY()));
+    // delete tmp;
 }
