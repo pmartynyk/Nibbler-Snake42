@@ -13,6 +13,8 @@ SRC		= ../src/Game.class.cpp\
 		../src/Snake.class.cpp\
 		../src/Unit.class.cpp\
 		../src/Food.class.cpp\
+		../src/Score_Time.class.cpp\
+		../src/Logic.class.cpp\
 		Ncurses.class.cpp
 		
 OBJ		= $(SRC:.cpp=.o)

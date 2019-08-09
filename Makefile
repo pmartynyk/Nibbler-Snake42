@@ -11,13 +11,17 @@ LIB	= Game.class.hpp\
 		IDynamiclibrary.hpp\
 		Snake.class.hpp\
 		Unit.class.hpp\
-		Food.class.hpp
+		Food.class.hpp\
+		Score_Time.class.hpp\
+		Logic.class.hpp
 
 SRC		= main.cpp\
 		Game.class.cpp\
 		Snake.class.cpp\
 		Unit.class.cpp\
-		Food.class.cpp
+		Food.class.cpp\
+		Score_Time.class.cpp\
+		Logic.class.cpp
 		
 OBJ		= $(SRC:.cpp=.o)
 

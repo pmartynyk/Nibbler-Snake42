@@ -26,18 +26,22 @@ Ncurses::~Ncurses(void)
 {
 }
 
-void Ncurses::draw(Snake &snake, Direction direction, int size, bool &endGame, Food &food)
+void Ncurses::draw(Snake &snake, Direction direction, int size, bool &endGame, Food &food, Score_Time &score_time)
 {
-    this->moveSnake(snake, direction);
-    this->checkFood(snake, food);
-    this->drowMap(snake, size);
-    this->drowFood(snake, food, size);
-    this->checkCollision(snake, endGame, size);
+    // this->moveSnake(snake, direction);
+    // this->checkFood(snake, food, score_time);
+    // this->checkCollision(snake, endGame, size);
+    Logic().logic(snake, food, direction, endGame, size, score_time);
 
     if (endGame)
         endwin();
     else
+    {
+        this->drowMap(snake, size);
+        this->drowFood(snake, food, size);
         this->drawSnake(snake);
+        this->drowScore(score_time);
+    }
 }
 
 void Ncurses::drowMap(Snake &snake, int size)
@@ -56,7 +60,7 @@ void Ncurses::drowMap(Snake &snake, int size)
     refresh();
     wresize(stdscr, size, size);
 
-    box(stdscr, 0, 0);
+    // box(stdscr, 0, 1);
     fillMap(snake, size);
     wrefresh(stdscr);
     refresh();
@@ -88,16 +92,12 @@ void Ncurses::drowFood(Snake &snake, Food &food, int size)
         int tmpY;
         tmpX = rand() % (size - 2) + 1;
         tmpY = rand() % (size - 2) + 1;
-
         food.setAlive(true);
-
         while (!notSnake(snake, tmpY, tmpX))
         {
             tmpX = rand() % (size - 2) + 1;
             tmpY = rand() % (size - 2) + 1;
         }
-        // tmpX = ((tmpX <= 1 || tmpX >= size - 1) ? size / 4 : tmpX);
-        // tmpY = ((tmpY <= 1 || tmpY >= size - 1) ? size / 2 : tmpY);
         food.setCord(tmpX, tmpY);
         attron(COLOR_PAIR(4));
         mvprintw(food.getY(), food.getX(), "o");
@@ -147,61 +147,76 @@ void Ncurses::drawSnake(Snake &snake)
     refresh();
 }
 
-void Ncurses::moveSnake(Snake &snake, Direction direction)
+void Ncurses::drowScore(Score_Time &score_time)
 {
-    int tmpX;
-    int tmpY;
-    int tmp1X;
-    int tmp1Y;
-    std::list<Unit *>::const_iterator it;
-    std::list<Unit *>::const_iterator ite = snake.getUnits().end();
-    for (it = snake.getUnits().begin(); it != ite; ++it)
-    {
-        if ((*it)->isHead())
-        {
-            tmpX = (*it)->getX();
-            tmpY = (*it)->getY();
-            if (direction == down)
-            {
-                (*it)->setY((*it)->getY() + 1);
-            }
-            else if (direction == right)
-            {
-                (*it)->setX((*it)->getX() + 1);
-            }
-            else if (direction == left)
-            {
-                (*it)->setX((*it)->getX() - 1);
-            }
-            else if (direction == up)
-            {
-                (*it)->setY((*it)->getY() - 1);
-            }
-        }
-        else
-        {
-            tmpX = (*it)->getX();
-            tmpY = (*it)->getY();
-            (*it)->setPrevX(tmpX);
-            (*it)->setPrevY(tmpY);
-            (*it)->setX(tmp1X);
-            (*it)->setY(tmp1Y);
-        }
-        tmp1X = tmpX;
-        tmp1Y = tmpY;
-    }
+    int duration = (std::clock() - score_time.getStart()) / (int)CLOCKS_PER_SEC;
+    int minutes;
+    int hours;
+    int seconds;
+    seconds = duration;
+    minutes = duration / 60;
+    hours = minutes / 60;
+    minutes = minutes - hours * 60;
+    seconds = seconds - minutes * 60;
+    mvprintw(0, 0, "[SCORE  %d] TIME:  %.2d:%.2d:%.2d", score_time.getScore(), hours, minutes, seconds);
 }
 
-void Ncurses::checkFood(Snake &snake, Food &food)
-{
-    std::list<Unit *>::const_iterator head = snake.getUnits().begin();
+// void Ncurses::moveSnake(Snake &snake, Direction direction)
+// {
+//     int tmpX;
+//     int tmpY;
+//     int tmp1X;
+//     int tmp1Y;
+//     std::list<Unit *>::const_iterator it;
+//     std::list<Unit *>::const_iterator ite = snake.getUnits().end();
+//     for (it = snake.getUnits().begin(); it != ite; ++it)
+//     {
+//         if ((*it)->isHead())
+//         {
+//             tmpX = (*it)->getX();
+//             tmpY = (*it)->getY();
+//             if (direction == down)
+//             {
+//                 (*it)->setY((*it)->getY() + 1);
+//             }
+//             else if (direction == right)
+//             {
+//                 (*it)->setX((*it)->getX() + 1);
+//             }
+//             else if (direction == left)
+//             {
+//                 (*it)->setX((*it)->getX() - 1);
+//             }
+//             else if (direction == up)
+//             {
+//                 (*it)->setY((*it)->getY() - 1);
+//             }
+//         }
+//         else
+//         {
+//             tmpX = (*it)->getX();
+//             tmpY = (*it)->getY();
+//             (*it)->setPrevX(tmpX);
+//             (*it)->setPrevY(tmpY);
+//             (*it)->setX(tmp1X);
+//             (*it)->setY(tmp1Y);
+//         }
+//         tmp1X = tmpX;
+//         tmp1Y = tmpY;
+//     }
+// }
 
-    if (food.getX() == (*head)->getX() && food.getY() == (*head)->getY())
-    {
-        food.setAlive(false);
-        snake.addUnit();
-    }
-}
+// void Ncurses::checkFood(Snake &snake, Food &food, Score_Time &score_time)
+// {
+//     std::list<Unit *>::const_iterator head = snake.getUnits().begin();
+
+//     if (food.getX() == (*head)->getX() && food.getY() == (*head)->getY())
+//     {
+//         food.setAlive(false);
+//         snake.addUnit();
+//         score_time.addScore(1);
+//     }
+// }
 
 Direction Ncurses::checkButton(Direction direction, bool &endGame)
 {
@@ -221,22 +236,22 @@ Direction Ncurses::checkButton(Direction direction, bool &endGame)
     return direction;
 }
 
-void Ncurses::checkCollision(Snake &snake, bool &endGame, int size)
-{
-    std::list<Unit *>::const_iterator head = snake.getUnits().begin();
-    if ((*head)->getX() < 1 || (*head)->getY() < 1 || (*head)->getX() >= size - 1 || (*head)->getY() >= size - 1)
-        endGame = true;
-    std::list<Unit *>::const_iterator it;
-    std::list<Unit *>::const_iterator ite = snake.getUnits().end();
-    for (it = snake.getUnits().begin(); it != ite; ++it)
-    {
-        if (!(*it)->isHead())
-        {
-            if ((*head)->getX() == (*it)->getX() && (*head)->getY() == (*it)->getY())
-            {
-                endGame = true;
-                return;
-            }
-        }
-    }
-}
+// void Ncurses::checkCollision(Snake &snake, bool &endGame, int size)
+// {
+//     std::list<Unit *>::const_iterator head = snake.getUnits().begin();
+//     if ((*head)->getX() < 1 || (*head)->getY() < 1 || (*head)->getX() >= size - 1 || (*head)->getY() >= size - 1)
+//         endGame = true;
+//     std::list<Unit *>::const_iterator it;
+//     std::list<Unit *>::const_iterator ite = snake.getUnits().end();
+//     for (it = snake.getUnits().begin(); it != ite; ++it)
+//     {
+//         if (!(*it)->isHead())
+//         {
+//             if ((*head)->getX() == (*it)->getX() && (*head)->getY() == (*it)->getY())
+//             {
+//                 endGame = true;
+//                 return;
+//             }
+//         }
+//     }
+// }

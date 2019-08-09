@@ -4,6 +4,8 @@
 #include "../includes/IDynamicLibrary.hpp"
 #include "../includes/Snake.class.hpp"
 #include "../includes/Food.class.hpp"
+#include "../includes/Score_Time.class.hpp"
+#include "../includes/Logic.class.hpp"
 #include <ncurses.h>
 #include <iostream>
 #include <string>
@@ -16,16 +18,17 @@ public:
     Ncurses &operator=(Ncurses const &val);
     ~Ncurses(void);
 
-    void draw(Snake &snake, Direction direction, int size, bool &endGame, Food &food);
+    void draw(Snake &snake, Direction direction, int size, bool &endGame, Food &food, Score_Time &score_time);
 
     void drowMap(Snake &snake, int size);
     void drowFood(Snake &snake, Food &food, int size);
+    void drowScore(Score_Time &score_time);
     void fillMap(Snake &snake, int size);
     bool notSnake(Snake &snake, int i, int j);
     void drawSnake(Snake &snake);
-    void moveSnake(Snake &snake, Direction direction);
-    void checkCollision(Snake &snake, bool &endGame, int size);
-    void checkFood(Snake &snake, Food &food);
+    // void moveSnake(Snake &snake, Direction direction);
+    // void checkCollision(Snake &snake, bool &endGame, int size);
+    // void checkFood(Snake &snake, Food &food, Score_Time &score_time);
 
 
     Direction checkButton(Direction direction, bool &endGame);

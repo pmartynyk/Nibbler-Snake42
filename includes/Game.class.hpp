@@ -6,7 +6,9 @@
 #include "IDynamicLibrary.hpp"
 #include "Snake.class.hpp"
 #include "Food.class.hpp"
-#include <random>
+#include "Score_Time.class.hpp"
+#include "Logic.class.hpp"
+#include <ncurses.h>
 
 class Game
 {
@@ -19,6 +21,7 @@ private:
     Snake _snake;
     Food _food;
     Direction _direction;
+    Score_Time _score_time;
 
 public:
     Game(int size);
@@ -29,6 +32,8 @@ public:
 
     void play(void);
     void selectLib(void);
+
+    // Direction checkButton(Direction direction, bool &endGame);
 
 };
 
