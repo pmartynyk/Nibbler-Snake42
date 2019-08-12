@@ -9,19 +9,19 @@ FLAG	= -std=c++11 -Wall -Wextra -Werror
 
 LIB		= Ncurses.class.hpp
 
-SRC		= ../src/Game.class.cpp\
-		../src/Snake.class.cpp\
-		../src/Unit.class.cpp\
-		../src/Food.class.cpp\
-		../src/Score_Time.class.cpp\
-		../src/Logic.class.cpp\
+SRC		= ../objects/Game.class.cpp\
+		../objects/Snake.class.cpp\
+		../objects/Unit.class.cpp\
+		../objects/Food.class.cpp\
+		../objects/Score_Time.class.cpp\
+		../objects/Logic.class.cpp\
 		Ncurses.class.cpp
 		
 OBJ		= $(SRC:.cpp=.o)
 
 all: $(NAME)
 
-$(OBJ_DIR)%.o: %.cpp 
+$(OBJ_DIR)%.o: %.cpp %.hpp
 	@$(CLANG) $(FLAG) -c $< -o $@ -I../includes
 
 $(NAME): $(OBJ) $(LIB)

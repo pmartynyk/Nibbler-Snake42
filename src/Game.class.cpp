@@ -47,36 +47,47 @@ void Game::play(void)
         t1 = clock() / (CLOCKS_PER_SEC / _fps);
         if (t1 > t2)
         {
-            
-            this->_library->draw(this->_snake, this->_direction, this->_size, this->_endGame, this->_food, this->_score_time);
+            Logic().logic(this->_snake, this->_food, this->_direction, this->_endGame, this->_size, this->_score_time, this->_music);
+            this->_library->draw(this->_snake, this->_size, this->_food, this->_score_time, this->_endGame);
             t2 = clock() / (CLOCKS_PER_SEC / _fps);
         }
     }
+}
+
+void Game::setMusic(void)
+{
+    IMusic *(*create)() = nullptr;
+    this->_dl = dlopen("./music/music.so", RTLD_LAZY | RTLD_LOCAL);
+
+    if (!this->_dl)
+    {
+        std::cerr << "open_lib: dlopen : " << dlerror() << std::endl;
+        throw std::exception();
+    }
+    if ((create = reinterpret_cast<IMusic *(*)()>(dlsym(this->_dl, "createLib"))) == NULL)
+    {
+        std::cerr << "open_lib: dlsym : " << dlerror() << std::endl;
+        throw std::exception();
+    }
+    this->_music = create();
 }
 
 void Game::selectLib(void)
 {
     IDynamicLibrary *(*create)() = nullptr;
     this->_dl = dlopen("./ncurses/ncurses.so", RTLD_LAZY | RTLD_LOCAL);
-    create = reinterpret_cast<IDynamicLibrary *(*)()>(dlsym(this->_dl, "createLib"));
+    // this->_dl = dlopen("./SDLlib/SDLlib.so", RTLD_LAZY | RTLD_LOCAL);
+    // create = reinterpret_cast<IDynamicLibrary *(*)()>(dlsym(this->_dl, "createLib"));
+
+    if (!this->_dl)
+    {
+        std::cerr << "open_lib: dlopen : " << dlerror() << std::endl;
+        throw std::exception();
+    }
+    if ((create = reinterpret_cast<IDynamicLibrary *(*)()>(dlsym(this->_dl, "createLib"))) == NULL)
+    {
+        std::cerr << "open_lib: dlsym : " << dlerror() << std::endl;
+        throw std::exception();
+    }
     this->_library = create();
 }
-
-
-// Direction Game::checkButton(Direction direction, bool &endGame)
-// {
-//     int c;
-
-//     c = getch();
-//     if (c == KEY_DOWN && direction != up)
-//         return down;
-//     else if (c == KEY_UP && direction != down)
-//         return up;
-//     else if (c == KEY_LEFT && direction != right)
-//         return left;
-//     else if (c == KEY_RIGHT && direction != left)
-//         return right;
-//     else if (c == 27)
-//         endGame = true;
-//     return direction;
-// }

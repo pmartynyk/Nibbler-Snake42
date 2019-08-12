@@ -4,6 +4,7 @@
 #include <iostream>
 #include <dlfcn.h>
 #include "IDynamicLibrary.hpp"
+#include "IMusic.hpp"
 #include "Snake.class.hpp"
 #include "Food.class.hpp"
 #include "Score_Time.class.hpp"
@@ -13,15 +14,16 @@
 class Game
 {
 private:
-    int _size;
+    int             _size;
     IDynamicLibrary *_library;
-    bool _endGame;
-    void *_dl;
-    int _fps;
-    Snake _snake;
-    Food _food;
-    Direction _direction;
-    Score_Time _score_time;
+    IMusic           *_music;
+    bool            _endGame; 
+    void            *_dl;
+    int             _fps;
+    Snake           _snake;
+    Food            _food;
+    Direction       _direction;
+    Score_Time      _score_time;
 
 public:
     Game(int size);
@@ -32,9 +34,7 @@ public:
 
     void play(void);
     void selectLib(void);
-
-    // Direction checkButton(Direction direction, bool &endGame);
-
+    void setMusic(void);
 };
 
 #endif

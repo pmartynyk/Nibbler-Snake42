@@ -1,6 +1,7 @@
 #include <iostream>
 #include "../includes/Game.class.hpp"
 
+
 int main(void)
 {
     int size;

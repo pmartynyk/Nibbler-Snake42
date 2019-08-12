@@ -19,11 +19,11 @@ Logic::~Logic(void)
 {
 }
 
-void Logic::logic(Snake &snake, Food &food, Direction direction, bool &endGame, int size, Score_Time &score_time)
+void Logic::logic(Snake &snake, Food &food, Direction direction, bool &endGame, int size, Score_Time &score_time, IMusic *music)
 {
     this->moveSnake(snake, direction);
     this->checkFood(snake, food, score_time);
-    this->checkCollision(snake, endGame, size);
+    this->checkCollision(snake, endGame, size, music);
 }
 
 void Logic::moveSnake(Snake &snake, Direction direction)
@@ -83,25 +83,8 @@ void Logic::checkFood(Snake &snake, Food &food, Score_Time &score_time)
     }
 }
 
-// Direction Logic::checkButton(Direction direction, bool &endGame)
-// {
-//     int c;
 
-//     c = getch();
-//     if (c == KEY_DOWN && direction != up)
-//         return down;
-//     else if (c == KEY_UP && direction != down)
-//         return up;
-//     else if (c == KEY_LEFT && direction != right)
-//         return left;
-//     else if (c == KEY_RIGHT && direction != left)
-//         return right;
-//     else if (c == 27)
-//         endGame = true;
-//     return direction;
-// }
-
-void Logic::checkCollision(Snake &snake, bool &endGame, int size)
+void Logic::checkCollision(Snake &snake, bool &endGame, int size, IMusic *music)
 {
     std::list<Unit *>::const_iterator head = snake.getUnits().begin();
     if ((*head)->getX() < 1 || (*head)->getY() < 1 || (*head)->getX() >= size - 1 || (*head)->getY() >= size - 1)
@@ -114,6 +97,7 @@ void Logic::checkCollision(Snake &snake, bool &endGame, int size)
         {
             if ((*head)->getX() == (*it)->getX() && (*head)->getY() == (*it)->getY())
             {
+                music->playCollision();
                 endGame = true;
                 return;
             }

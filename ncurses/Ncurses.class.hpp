@@ -18,7 +18,7 @@ public:
     Ncurses &operator=(Ncurses const &val);
     ~Ncurses(void);
 
-    void draw(Snake &snake, Direction direction, int size, bool &endGame, Food &food, Score_Time &score_time);
+    void draw(Snake &snake, int size, Food &food, Score_Time &score_time, bool &endGame);
 
     void drowMap(Snake &snake, int size);
     void drowFood(Snake &snake, Food &food, int size);
