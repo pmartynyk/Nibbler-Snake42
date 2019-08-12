@@ -22,7 +22,7 @@ Logic::~Logic(void)
 void Logic::logic(Snake &snake, Food &food, Direction direction, bool &endGame, int size, Score_Time &score_time, IMusic *music)
 {
     this->moveSnake(snake, direction);
-    this->checkFood(snake, food, score_time);
+    this->checkFood(snake, food, score_time, music);
     this->checkCollision(snake, endGame, size, music);
 }
 
@@ -71,12 +71,13 @@ void Logic::moveSnake(Snake &snake, Direction direction)
     }
 }
 
-void Logic::checkFood(Snake &snake, Food &food, Score_Time &score_time)
+void Logic::checkFood(Snake &snake, Food &food, Score_Time &score_time, IMusic *music)
 {
     std::list<Unit *>::const_iterator head = snake.getUnits().begin();
 
     if (food.getX() == (*head)->getX() && food.getY() == (*head)->getY())
     {
+        music->playEat();
         food.setAlive(false);
         snake.addUnit();
         score_time.addScore(1);

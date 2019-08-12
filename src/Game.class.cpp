@@ -35,9 +35,10 @@ int Game::getSize(void)
 
 void Game::play(void)
 {
-    (void)_direction;
+    // (void)_direction;
     clock_t t1;
     clock_t t2 = 0;
+    setMusic();
     selectLib();
     this->_snake.setData(this->_size / 2, this->_size / 2, 4);
     srand((int)time(0));
@@ -57,14 +58,14 @@ void Game::play(void)
 void Game::setMusic(void)
 {
     IMusic *(*create)() = nullptr;
-    this->_dl = dlopen("./music/music.so", RTLD_LAZY | RTLD_LOCAL);
+    this->_dlMus = dlopen("./music/music.so", RTLD_LAZY | RTLD_LOCAL);
 
-    if (!this->_dl)
+    if (this->_dlMus == nullptr)
     {
         std::cerr << "open_lib: dlopen : " << dlerror() << std::endl;
         throw std::exception();
     }
-    if ((create = reinterpret_cast<IMusic *(*)()>(dlsym(this->_dl, "createLib"))) == NULL)
+    if ((create = reinterpret_cast<IMusic *(*)()>(dlsym(this->_dlMus, "create"))) == NULL)
     {
         std::cerr << "open_lib: dlsym : " << dlerror() << std::endl;
         throw std::exception();

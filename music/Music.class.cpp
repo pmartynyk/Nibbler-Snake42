@@ -27,7 +27,12 @@ Music::~Music(void)
 {
 }
 
+void Music::playEat(void)
+{
+    system("say oum&");
+}
+
 void Music::playCollision(void)
 {
-    system("afplay sound/bgm.mp3 &");
+    system("say ouou&");
 }

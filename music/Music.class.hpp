@@ -12,6 +12,7 @@ public:
   Music &operator=(Music const &val);
   ~Music(void);
 
+  void playEat(void);
   void playCollision(void);
 };
 

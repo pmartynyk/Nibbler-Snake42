@@ -21,7 +21,7 @@ public:
 
     void moveSnake(Snake &snake, Direction direction);
     void checkCollision(Snake &snake, bool &endGame, int size, IMusic *music);
-    void checkFood(Snake &snake, Food &food, Score_Time &score_time);
+    void checkFood(Snake &snake, Food &food, Score_Time &score_time, IMusic *music);
 
     // Direction checkButton(Direction direction, bool &endGame);
 };

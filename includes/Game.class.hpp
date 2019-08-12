@@ -19,6 +19,7 @@ private:
     IMusic           *_music;
     bool            _endGame; 
     void            *_dl;
+    void            *_dlMus;
     int             _fps;
     Snake           _snake;
     Food            _food;

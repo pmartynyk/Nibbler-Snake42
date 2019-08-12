@@ -31,7 +31,6 @@ void Ncurses::draw(Snake &snake, int size, Food &food, Score_Time &score_time, b
     if (endGame)
     {
         endwin();
-        system("killall afplay");
     }
     else
     {
