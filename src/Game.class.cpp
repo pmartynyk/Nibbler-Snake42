@@ -1,6 +1,6 @@
 #include "../includes/Game.class.hpp"
 
-Game::Game(int size) : _size(size), _endGame(false), _fps(5), _direction(down)
+Game::Game(int size) : _size(size), _endGame(false), _fps(5), _direction(down), _dynamicLibrary(ncurses)
 {
 }
 
@@ -35,7 +35,6 @@ int Game::getSize(void)
 
 void Game::play(void)
 {
-    // (void)_direction;
     clock_t t1;
     clock_t t2 = 0;
     setMusic();
@@ -44,10 +43,10 @@ void Game::play(void)
     srand((int)time(0));
     while (!this->_endGame)
     {
-        this->_direction = this->_library->checkButton(this->_direction, this->_endGame);
         t1 = clock() / (CLOCKS_PER_SEC / _fps);
         if (t1 > t2)
         {
+            this->_direction = this->_library->checkButton(this->_direction, this->_endGame, this->_dynamicLibrary);
             Logic().logic(this->_snake, this->_food, this->_direction, this->_endGame, this->_size, this->_score_time, this->_music);
             this->_library->draw(this->_snake, this->_size, this->_food, this->_score_time, this->_endGame);
             t2 = clock() / (CLOCKS_PER_SEC / _fps);

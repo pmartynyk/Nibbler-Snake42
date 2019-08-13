@@ -28,12 +28,20 @@ Ncurses::~Ncurses(void)
 
 void Ncurses::draw(Snake &snake, int size, Food &food, Score_Time &score_time, bool &endGame)
 {
+    // (void)snake;
+    // (void)size;
+    // (void)food;
+    // (void) score_time;
     if (endGame)
     {
         endwin();
     }
     else
     {
+        //     int c;
+
+        // c = getch();
+        // std::cout << c << std::endl;
         this->drowMap(snake, size);
         this->drowFood(snake, food, size);
         this->drawSnake(snake);
@@ -56,8 +64,6 @@ void Ncurses::drowMap(Snake &snake, int size)
     init_pair(4, COLOR_YELLOW, COLOR_BLACK);
     refresh();
     wresize(stdscr, size, size);
-
-    // box(stdscr, 0, 1);
     fillMap(snake, size);
     wrefresh(stdscr);
     refresh();
@@ -155,10 +161,10 @@ void Ncurses::drowScore(Score_Time &score_time)
     hours = minutes / 60;
     minutes = minutes - hours * 60;
     seconds = seconds - minutes * 60;
-    mvprintw(0, 0, "[SCORE  %d] TIME: %.2d:%.2d:%.2d", score_time.getScore(), hours, minutes, seconds);
+    mvprintw(0, 0, "SCORE: %d TIME:%.2d:%.2d:%.2d", score_time.getScore(), hours, minutes, seconds);
 }
 
-Direction Ncurses::checkButton(Direction direction, bool &endGame)
+Direction Ncurses::checkButton(Direction direction, bool &endGame, Direction &library)
 {
     int c;
 
@@ -173,5 +179,11 @@ Direction Ncurses::checkButton(Direction direction, bool &endGame)
         return right;
     else if (c == 27)
         endGame = true;
+    else if (c == 1)
+        library = ncurses;
+    else if (c == 2)
+        library = sdl;
+    else if (c == 3)
+        library = sfml;
     return direction;
 }

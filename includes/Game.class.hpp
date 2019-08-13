@@ -13,20 +13,21 @@
 
 class Game
 {
-private:
-    int             _size;
+  private:
+    int _size;
     IDynamicLibrary *_library;
-    IMusic           *_music;
-    bool            _endGame; 
-    void            *_dl;
-    void            *_dlMus;
-    int             _fps;
-    Snake           _snake;
-    Food            _food;
-    Direction       _direction;
-    Score_Time      _score_time;
+    IMusic *_music;
+    bool _endGame;
+    void *_dl;
+    void *_dlMus;
+    int _fps;
+    Snake _snake;
+    Food _food;
+    Direction _direction;
+    Direction _dynamicLibrary;
+    Score_Time _score_time;
 
-public:
+  public:
     Game(int size);
     Game(Game const &val);
     Game &operator=(Game const &val);

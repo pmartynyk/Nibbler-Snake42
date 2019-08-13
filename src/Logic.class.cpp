@@ -87,6 +87,7 @@ void Logic::checkFood(Snake &snake, Food &food, Score_Time &score_time, IMusic *
 
 void Logic::checkCollision(Snake &snake, bool &endGame, int size, IMusic *music)
 {
+    (void)music;
     std::list<Unit *>::const_iterator head = snake.getUnits().begin();
     if ((*head)->getX() < 1 || (*head)->getY() < 1 || (*head)->getX() >= size - 1 || (*head)->getY() >= size - 1)
         endGame = true;
