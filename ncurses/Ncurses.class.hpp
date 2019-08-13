@@ -15,7 +15,6 @@ class Ncurses : public IDynamicLibrary
 public:
     Ncurses(void);
     Ncurses(Ncurses const &val);
-    Ncurses &operator=(Ncurses const &val);
     ~Ncurses(void);
 
     void draw(Snake &snake, int size, Food &food, Score_Time &score_time, bool &endGame);
@@ -31,7 +30,7 @@ public:
     // void checkFood(Snake &snake, Food &food, Score_Time &score_time);
 
 
-    Direction checkButton(Direction direction, bool &endGame, Direction &library);
+    Direction checkButton(Direction direction, bool &endGame, Event &event, bool &changeLibrary);
 };
 
 #endif

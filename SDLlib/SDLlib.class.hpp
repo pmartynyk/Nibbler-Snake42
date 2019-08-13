@@ -53,7 +53,7 @@ public:
     // void checkCollision(Snake &snake, bool &endGame, int size);
     // void checkFood(Snake &snake, Food &food, Score_Time &score_time);
 
-    Direction checkButton(Direction direction, bool &endGame, Direction &library);
+    Direction checkButton(Direction direction, bool &endGame, Event &event, bool &changeLibrary);
 
     void close();
     bool init(int size);

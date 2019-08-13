@@ -14,34 +14,22 @@ Ncurses::Ncurses(Ncurses const &val)
     *this = val;
 }
 
-Ncurses &Ncurses::operator=(Ncurses const &val)
-{
-    if (this != &val)
-    {
-    }
-    return *this;
-}
-
 Ncurses::~Ncurses(void)
 {
+    erase();
+    refresh();
+    endwin();
+    system("reset");
 }
 
 void Ncurses::draw(Snake &snake, int size, Food &food, Score_Time &score_time, bool &endGame)
 {
-    // (void)snake;
-    // (void)size;
-    // (void)food;
-    // (void) score_time;
     if (endGame)
     {
         endwin();
     }
     else
     {
-        //     int c;
-
-        // c = getch();
-        // std::cout << c << std::endl;
         this->drowMap(snake, size);
         this->drowFood(snake, food, size);
         this->drawSnake(snake);
@@ -164,7 +152,7 @@ void Ncurses::drowScore(Score_Time &score_time)
     mvprintw(0, 0, "SCORE: %d TIME:%.2d:%.2d:%.2d", score_time.getScore(), hours, minutes, seconds);
 }
 
-Direction Ncurses::checkButton(Direction direction, bool &endGame, Direction &library)
+Direction Ncurses::checkButton(Direction direction, bool &endGame, Event &event, bool &changeLibrary)
 {
     int c;
 
@@ -179,11 +167,20 @@ Direction Ncurses::checkButton(Direction direction, bool &endGame, Direction &li
         return right;
     else if (c == 27)
         endGame = true;
-    else if (c == 1)
-        library = ncurses;
-    else if (c == 2)
-        library = sdl;
-    else if (c == 3)
-        library = sfml;
+    else if (c == 113)
+    {
+        event = ncurses;
+        changeLibrary = true;
+    }
+    else if (c == 119)
+    {
+        event = sdl;
+        changeLibrary = true;
+    }
+    else if (c == 101)
+    {
+        event = sfml;
+        changeLibrary = true;
+    }
     return direction;
 }

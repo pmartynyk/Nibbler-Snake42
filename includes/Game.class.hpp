@@ -24,8 +24,9 @@ class Game
     Snake _snake;
     Food _food;
     Direction _direction;
-    Direction _dynamicLibrary;
+    Event _event;
     Score_Time _score_time;
+    bool _changeLibrary;
 
   public:
     Game(int size);
