@@ -43,7 +43,7 @@ mkdir:
 $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp 
 	@$(CLANG) $(FLAG) -c $< -o $@ -I$(LIBS_DIR)
 
-$(NAME): $(OBJF) $(LIBF) ncur sdl mus
+$(NAME): $(OBJF) $(LIBF) ncur sdl sfml mus
 	@$(CLANG) $(FLAG) $(OBJF) -o $(NAME) 
 	@echo "\033[32mDONE\033[39m"
 
@@ -59,6 +59,10 @@ sdl:
 	@make -C ./SDLlib/
 	@echo "\033[32mSDL Builded\033[39m"
 
+sfml:
+	@make -C ./sfmlLib/
+	@echo "\033[32mSFML Builded\033[39m"
+
 clean:
 	@rm -f $(OBJ_DIR)*.o
 	@rm -f $(SRC_DIR)*.o
@@ -66,12 +70,14 @@ clean:
 	@make -C music clean
 	@make -C ncurses clean
 	@make -C SDLlib clean
+	@make -C sfmlLib clean
 
 fclean: clean
 	@/bin/rm -f $(NAME)
 	@make -C music fclean
 	@make -C ncurses fclean
 	@make -C SDLlib fclean
+	@make -C sfmlLib fclean
 	@echo "\033[32mCLEANED ALL\033[39m"
 
 re: fclean all

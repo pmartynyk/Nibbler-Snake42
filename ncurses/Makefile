@@ -19,6 +19,8 @@ SRC		= ../objects/Game.class.cpp\
 		
 OBJ		= $(SRC:.cpp=.o)
 
+OBJ_DIR = ./objects/
+
 all: $(NAME)
 
 $(OBJ_DIR)%.o: %.cpp %.hpp
