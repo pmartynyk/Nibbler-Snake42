@@ -90,8 +90,8 @@ void Game::selectLib()
         this->_dl = dlopen("./ncurses/ncurses.so", RTLD_LAZY | RTLD_LOCAL);
     else if (this->_event == sdl)
         this->_dl = dlopen("./SDLlib/SDLlib.so", RTLD_LAZY | RTLD_LOCAL);
-    // else if (this->_event == sfml)
-    //     this->_dl = dlopen("./SFMLlib/SFMLlib.so", RTLD_LAZY | RTLD_LOCAL);
+    else if (this->_event == sfml)
+        this->_dl = dlopen("./sfmlLib/sfml.so", RTLD_LAZY | RTLD_LOCAL);
     this->_changeLibrary = false;
     if (!this->_dl)
     {

@@ -25,10 +25,6 @@ public:
     void fillMap(Snake &snake, int size);
     bool notSnake(Snake &snake, int i, int j);
     void drawSnake(Snake &snake);
-    // void moveSnake(Snake &snake, Direction direction);
-    // void checkCollision(Snake &snake, bool &endGame, int size);
-    // void checkFood(Snake &snake, Food &food, Score_Time &score_time);
-
 
     Direction checkButton(Direction direction, bool &endGame, Event &event, bool &changeLibrary, bool &move);
 };
