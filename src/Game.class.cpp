@@ -83,7 +83,6 @@ void Game::selectLib()
 
     if (this->_library != nullptr)
     {
-        this->_event = stop;
         delete(this->_library);
     }        
 
@@ -93,7 +92,12 @@ void Game::selectLib()
         this->_dl = dlopen("./SDLlib/SDLlib.so", RTLD_LAZY | RTLD_LOCAL);
     else if (this->_event == sfml)
         this->_dl = dlopen("./sfmlLib/sfml.so", RTLD_LAZY | RTLD_LOCAL);
-    this->_changeLibrary = false;
+
+    if (this->_changeLibrary)
+    {
+        this->_changeLibrary = false;
+        this->_event = stop;    
+    }
     if (!this->_dl)
     {
         std::cerr << "open_lib: dlopen : " << dlerror() << std::endl;

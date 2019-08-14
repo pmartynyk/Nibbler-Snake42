@@ -36,7 +36,21 @@ void SFML::draw(Snake &snake, int size, Food &food, Score_Time &score_time, bool
 void SFML::drowMap(Snake &snake, int size)
 {
     (void)snake;
-    (void)size;
+    // (void)size;
+   
+    sf::RenderWindow window;
+    window.create(sf::VideoMode(size, size), "My window");
+    while (window.isOpen())
+    {
+        // check all the window's events that were triggered since the last iteration of the loop
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            // "close requested" event: we close the window
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
+    }
 }
 
 void SFML::fillMap(Snake &snake, int size)
