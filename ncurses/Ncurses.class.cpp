@@ -203,6 +203,8 @@ Direction Ncurses::checkButton(Direction direction, bool &endGame, Event &event,
             return right;
         }
     }
+     if (event == stop && c == 32)
+        event = go;
     if (c == 27)
         endGame = true;
     else if (c == 49)
@@ -220,5 +222,7 @@ Direction Ncurses::checkButton(Direction direction, bool &endGame, Event &event,
         event = sfml;
         changeLibrary = true;
     }
+   
+
     return direction;
 }

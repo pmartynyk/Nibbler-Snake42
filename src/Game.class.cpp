@@ -44,14 +44,12 @@ void Game::play(void)
     while (!this->_endGame)
     {
         this->_direction = this->_library->checkButton(this->_direction, this->_endGame, this->_event, this->_changeLibrary, this->_move);
-        // if (this->_endGame)
-        //     delete this->_library;
         t1 = clock() / (CLOCKS_PER_SEC / _fps);
         if (t1 > t2 || this->_endGame)
         {
             if (this->_changeLibrary)
                 selectLib();
-            if (!this->_endGame)
+            if (!this->_endGame && this->_event != stop)
                 Logic().logic(this->_snake, this->_food, this->_direction, this->_endGame, this->_size, this->_score_time, this->_music, this->_fps);
             this->_library->draw(this->_snake, this->_size, this->_food, this->_score_time, this->_endGame);
             t2 = clock() / (CLOCKS_PER_SEC / _fps);
@@ -84,7 +82,10 @@ void Game::selectLib()
     IDynamicLibrary *(*create)() = nullptr;
 
     if (this->_library != nullptr)
+    {
+        this->_event = stop;
         delete(this->_library);
+    }        
 
     if (this->_event == ncurses)
         this->_dl = dlopen("./ncurses/ncurses.so", RTLD_LAZY | RTLD_LOCAL);
@@ -104,4 +105,5 @@ void Game::selectLib()
         throw std::exception();
     }
     this->_library = create();
+    
 }

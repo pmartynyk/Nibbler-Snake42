@@ -19,7 +19,8 @@ enum Event
     ncurses,
     sdl,
     sfml,
-    stop
+    stop,
+    go
 };
 
 class IDynamicLibrary
