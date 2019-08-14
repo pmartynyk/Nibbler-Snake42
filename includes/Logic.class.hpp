@@ -17,11 +17,11 @@ public:
     Logic &operator=(Logic const &val);
     ~Logic(void);
 
-    void logic(Snake &snake, Food &food, Direction direction, bool &endGame, int size, Score_Time &score_time, IMusic *music);
+    void logic(Snake &snake, Food &food, Direction direction, bool &endGame, int size, Score_Time &score_time, IMusic *music, int &fps);
 
     void moveSnake(Snake &snake, Direction direction);
     void checkCollision(Snake &snake, bool &endGame, int size, IMusic *music);
-    void checkFood(Snake &snake, Food &food, Score_Time &score_time, IMusic *music);
+    void checkFood(Snake &snake, Food &food, Score_Time &score_time, IMusic *music, int &fps);
 
     // Direction checkButton(Direction direction, bool &endGame);
 };

@@ -30,7 +30,7 @@ public:
     // void checkFood(Snake &snake, Food &food, Score_Time &score_time);
 
 
-    Direction checkButton(Direction direction, bool &endGame, Event &event, bool &changeLibrary);
+    Direction checkButton(Direction direction, bool &endGame, Event &event, bool &changeLibrary, bool &move);
 };
 
 #endif

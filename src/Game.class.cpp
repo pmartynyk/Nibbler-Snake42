@@ -1,6 +1,6 @@
 #include "../includes/Game.class.hpp"
 
-Game::Game(int size) : _size(size), _endGame(false), _fps(5), _direction(down), _event(ncurses), _changeLibrary(false)
+Game::Game(int size) : _size(size), _library(nullptr), _endGame(false), _fps(5), _direction(down), _event(ncurses), _changeLibrary(false), _move(true)
 {
 }
 
@@ -43,19 +43,20 @@ void Game::play(void)
     srand((int)time(0));
     while (!this->_endGame)
     {
+        this->_direction = this->_library->checkButton(this->_direction, this->_endGame, this->_event, this->_changeLibrary, this->_move);
+        // if (this->_endGame)
+        //     delete this->_library;
         t1 = clock() / (CLOCKS_PER_SEC / _fps);
-        if (t1 > t2)
+        if (t1 > t2 || this->_endGame)
         {
-            this->_direction = this->_library->checkButton(this->_direction, this->_endGame, this->_event, this->_changeLibrary);
             if (this->_changeLibrary)
-            {
                 selectLib();
-                this->_changeLibrary = false;
-            }
-            if (this->_event != stop)
-                Logic().logic(this->_snake, this->_food, this->_direction, this->_endGame, this->_size, this->_score_time, this->_music);
+            if (!this->_endGame)
+                Logic().logic(this->_snake, this->_food, this->_direction, this->_endGame, this->_size, this->_score_time, this->_music, this->_fps);
             this->_library->draw(this->_snake, this->_size, this->_food, this->_score_time, this->_endGame);
             t2 = clock() / (CLOCKS_PER_SEC / _fps);
+            this->_move = true;
+            
         }
     }
 }
@@ -82,9 +83,8 @@ void Game::selectLib()
 {
     IDynamicLibrary *(*create)() = nullptr;
 
-    if (!this->_library)
-        delete this->_library;
-        // this->_music->playCollision();
+    if (this->_library != nullptr)
+        delete(this->_library);
 
     if (this->_event == ncurses)
         this->_dl = dlopen("./ncurses/ncurses.so", RTLD_LAZY | RTLD_LOCAL);
@@ -92,7 +92,7 @@ void Game::selectLib()
         this->_dl = dlopen("./SDLlib/SDLlib.so", RTLD_LAZY | RTLD_LOCAL);
     // else if (this->_event == sfml)
     //     this->_dl = dlopen("./SFMLlib/SFMLlib.so", RTLD_LAZY | RTLD_LOCAL);
-
+    this->_changeLibrary = false;
     if (!this->_dl)
     {
         std::cerr << "open_lib: dlopen : " << dlerror() << std::endl;
@@ -104,5 +104,4 @@ void Game::selectLib()
         throw std::exception();
     }
     this->_library = create();
-    
 }

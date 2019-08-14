@@ -27,6 +27,7 @@ class Game
     Event _event;
     Score_Time _score_time;
     bool _changeLibrary;
+    bool _move;
 
   public:
     Game(int size);

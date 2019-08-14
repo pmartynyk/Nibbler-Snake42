@@ -19,10 +19,10 @@ Logic::~Logic(void)
 {
 }
 
-void Logic::logic(Snake &snake, Food &food, Direction direction, bool &endGame, int size, Score_Time &score_time, IMusic *music)
+void Logic::logic(Snake &snake, Food &food, Direction direction, bool &endGame, int size, Score_Time &score_time, IMusic *music, int &fps)
 {
     this->moveSnake(snake, direction);
-    this->checkFood(snake, food, score_time, music);
+    this->checkFood(snake, food, score_time, music, fps);
     this->checkCollision(snake, endGame, size, music);
 }
 
@@ -71,7 +71,7 @@ void Logic::moveSnake(Snake &snake, Direction direction)
     }
 }
 
-void Logic::checkFood(Snake &snake, Food &food, Score_Time &score_time, IMusic *music)
+void Logic::checkFood(Snake &snake, Food &food, Score_Time &score_time, IMusic *music, int &fps)
 {
     std::list<Unit *>::const_iterator head = snake.getUnits().begin();
 
@@ -81,6 +81,8 @@ void Logic::checkFood(Snake &snake, Food &food, Score_Time &score_time, IMusic *
         food.setAlive(false);
         snake.addUnit();
         score_time.addScore(1);
+        if (score_time.getScore() % 5 == 0)
+                fps++;
     }
 }
 

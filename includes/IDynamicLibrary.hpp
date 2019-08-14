@@ -27,7 +27,7 @@ class IDynamicLibrary
   public:
     virtual ~IDynamicLibrary(void){};
     virtual void draw(Snake &snake, int size, Food &food, Score_Time &score_time, bool &endGame) = 0;
-    virtual Direction checkButton(Direction direction, bool &endGame, Event &event, bool &changeLibrary) = 0;
+    virtual Direction checkButton(Direction direction, bool &endGame, Event &event, bool &changeLibrary, bool &move) = 0;
 
     virtual void drowMap(Snake &snake, int size) = 0;
     virtual void drowFood(Snake &snake, Food &food, int size) = 0;

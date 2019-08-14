@@ -334,7 +334,7 @@ void SDLlib::drowScore(Score_Time &score_time)
 	// mvprintw(0, 0, "[SCORE  %d] TIME:  %.2d:%.2d:%.2d", score_time.getScore(), hours, minutes, seconds);
 }
 
-Direction SDLlib::checkButton(Direction direction, bool &endGame, Event &event, bool &changeLibrary)
+Direction SDLlib::checkButton(Direction direction, bool &endGame, Event &event, bool &changeLibrary, bool &move)
 {
 	SDL_Event e;
 	

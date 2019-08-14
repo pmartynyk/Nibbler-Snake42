@@ -26,6 +26,29 @@ void Ncurses::draw(Snake &snake, int size, Food &food, Score_Time &score_time, b
 {
     if (endGame)
     {
+        int c;
+        WINDOW *end = newwin(7, 20, (size / 2 - 3), (size / 2) - 10);
+        int duration = (std::clock() - score_time.getStart()) / (int)CLOCKS_PER_SEC;
+        while ((c = getch()) != 27)
+        {
+            
+            int minutes;
+            int hours;
+            int seconds;
+            seconds = duration;
+            minutes = duration / 60;
+            hours = minutes / 60;
+            minutes = minutes - hours * 60;
+            seconds = seconds - minutes * 60;
+            box(end, 0, 0);
+            mvwprintw(end, 1, 6, "GAMEOVER");
+            mvwprintw(end, 3, 2, "SCORE: %d", score_time.getScore());
+            mvwprintw(end, 5, 2, "TIME:  %.2d:%.2d:%.2d", hours, minutes, seconds);
+            refresh();
+            wrefresh(end);
+        }
+        delwin(end);
+        refresh();
         endwin();
     }
     else
@@ -152,32 +175,47 @@ void Ncurses::drowScore(Score_Time &score_time)
     mvprintw(0, 0, "SCORE: %d TIME:%.2d:%.2d:%.2d", score_time.getScore(), hours, minutes, seconds);
 }
 
-Direction Ncurses::checkButton(Direction direction, bool &endGame, Event &event, bool &changeLibrary)
+Direction Ncurses::checkButton(Direction direction, bool &endGame, Event &event, bool &changeLibrary, bool &move)
 {
     int c;
 
     c = getch();
-    if (c == KEY_DOWN && direction != up)
-        return down;
-    else if (c == KEY_UP && direction != down)
-        return up;
-    else if (c == KEY_LEFT && direction != right)
-        return left;
-    else if (c == KEY_RIGHT && direction != left)
-        return right;
-    else if (c == 27)
+    if (move)
+    {
+        if (c == KEY_DOWN && direction != up)
+        {
+            move = false;
+            return down;
+        }
+        else if (c == KEY_UP && direction != down)
+        {
+            move = false;
+            return up;
+        }
+        else if (c == KEY_LEFT && direction != right)
+        {
+            move = false;
+            return left;
+        }
+        else if (c == KEY_RIGHT && direction != left)
+        {
+            move = false;
+            return right;
+        }
+    }
+    if (c == 27)
         endGame = true;
-    else if (c == 113)
+    else if (c == 49)
     {
         event = ncurses;
         changeLibrary = true;
     }
-    else if (c == 119)
+    else if (c == 50)
     {
         event = sdl;
         changeLibrary = true;
     }
-    else if (c == 101)
+    else if (c == 51)
     {
         event = sfml;
         changeLibrary = true;
