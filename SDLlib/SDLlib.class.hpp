@@ -35,6 +35,9 @@ SDL_Surface* gCurrentSurface = NULL;
 
 class SDLlib : public IDynamicLibrary
 {
+private:
+    SDL_Window      *_window;
+    SDL_Renderer    *_renderer;
 public:
     SDLlib(void);
     SDLlib(SDLlib const &val);
