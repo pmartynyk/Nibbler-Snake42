@@ -7,8 +7,8 @@
 #include "../includes/Score_Time.class.hpp"
 #include "../includes/Logic.class.hpp"
 
-// #include <SDL2/SDL.h>
 #include "./SDL/SDL2.framework/Versions/A/Headers/SDL.h"
+#include "./SDL/SDL2_ttf.framework/Versions/A/Headers/SDL_ttf.h"
 
 class SDLlib : public IDynamicLibrary
 {

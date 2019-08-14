@@ -1,4 +1,6 @@
 #include "SDLlib.class.hpp"
+#include <sstream>
+#include <iomanip>
 
 extern "C" IDynamicLibrary *createLib(void)
 {
@@ -26,6 +28,11 @@ SDLlib::SDLlib(void) : _window(nullptr), _renderer(nullptr) {
 		std::cout << "SDL could not initialize! SDL Error: " <<  SDL_GetError() << std::endl;
 		exit(-1);
 	}
+	if( TTF_Init() < 0 )
+	{
+		std::cout << "SDL could not initialize! SDL_ttf Error: " <<  SDL_GetError() << std::endl;
+		exit(-1);
+	}
 }
 
 SDLlib::~SDLlib(void) {
@@ -33,26 +40,28 @@ SDLlib::~SDLlib(void) {
 	SDL_DestroyWindow( _window );
 	_window = NULL;
 	SDL_Quit();
+
+	 TTF_Quit();
 }
 
 void SDLlib::draw(Snake &snake, int size, Food &food, Score_Time &score_time, bool &endGame)
 {
 	if (endGame) {
-		(void)score_time;
+		this->drowScore(score_time);
 	}
 	else {
 		SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
 		SDL_RenderClear(_renderer);
-
 		static bool i = true;
 
 		if (i) {
 			this->drowMap(snake, size);
 			i = false;
 		}
-		
+		// this->drowScore(score_time);
 		this->drawSnake(snake);
 		this->drowFood(snake, food, size);
+		
 		SDL_RenderPresent(_renderer);
 	}
 }
@@ -66,6 +75,7 @@ void SDLlib::drowMap(Snake &, int size)
 		exit(-1);
 	}
 	_renderer = SDL_CreateRenderer(_window, -1, 0);
+	SDL_RenderClear(_renderer);
 }
 
 void SDLlib::drowFood(Snake &snake, Food &food, int size)
@@ -106,7 +116,7 @@ bool SDLlib::notSnake(Snake &snake, int i, int j)
 
 void SDLlib::drawSnake(Snake &snake)
 {
-	SDL_RenderClear(_renderer);
+	// SDL_RenderClear(_renderer);
 	SDL_Point point;
 
 	for (auto it : snake.getUnits())
@@ -128,8 +138,33 @@ void SDLlib::drawSnake(Snake &snake)
 	}
 }
 
+
+void getStatus(Score_Time &score_time, std::pair <std::string, std::string> &sc)
+{
+    int duration = (std::clock() - score_time.getStart()) / (int)CLOCKS_PER_SEC;
+    int minutes;
+    int hours;
+    int seconds;
+    seconds = duration;
+    minutes = duration / 60;
+    hours = minutes / 60;
+    minutes = minutes - hours * 60;
+    seconds = seconds - minutes * 60;
+
+	std::ostringstream score;
+	score << "SCORE: " << score_time.getScore();
+	sc.first = score.str().c_str();
+
+	std::ostringstream t;
+	t << "TIME: "	<< std::setw(2) << std::setfill('0') << hours << ":"
+					<< std::setw(2) << std::setfill('0') << minutes << ":"
+					<< std::setw(2) << std::setfill('0') << seconds;
+	sc.second = t.str().c_str();
+}
+
 void SDLlib::drowScore(Score_Time &score_time)
 {
+	// SDL_RenderClear(_renderer);
 	int duration = (std::clock() - score_time.getStart()) / (int)CLOCKS_PER_SEC;
 	int minutes;
 	int hours;
@@ -139,22 +174,48 @@ void SDLlib::drowScore(Score_Time &score_time)
 	hours = minutes / 60;
 	minutes = minutes - hours * 60;
 	seconds = seconds - minutes * 60;
-	// mvprintw(0, 0, "[SCORE  %d] TIME:  %.2d:%.2d:%.2d", score_time.getScore(), hours, minutes, seconds);
+	std::ostringstream stringStream;
+	stringStream << "SCORE: " << score_time.getScore() << std::endl
+				 << "TIME: " << std::setw(2) << std::setfill('0') << hours << ":"
+							<< std::setw(2) << std::setfill('0') << minutes << ":"
+							<< std::setw(2) << std::setfill('0') << seconds;
+
+	TTF_Font * font = TTF_OpenFont("/System/Library/Fonts/Times.ttc", 25);
+	if( !font )
+	{
+		std::cout << "SDL could not initialize! SDL_ttf Error: " <<  TTF_GetError() << std::endl;
+		exit(-1);
+	}
+	SDL_Color color = { 255, 255, 255 , 0};
+	SDL_Surface * surface = TTF_RenderText_Solid(font, stringStream.str().c_str(), color);
+	SDL_Texture * texture = SDL_CreateTextureFromSurface(_renderer, surface);
+
+	int texW = 0;
+	int texH = 0;
+	SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
+	SDL_Rect dstrect = { 0, 0, texW, texH };
+
+	SDL_RenderCopy(_renderer, texture, NULL, &dstrect);
+	SDL_RenderPresent(_renderer);
+
+	/* SDL_Event e;
+	SDL_PollEvent( &e );
+	while (!((e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE) || e.type == SDL_QUIT))
+		SDL_PollEvent( &e ); */
+
+	TTF_CloseFont(font);
 }
 
 Direction SDLlib::checkButton(Direction direction, bool &endGame, Event &event, bool &changeLibrary, bool &move)
 {
 	SDL_Event e;
 	
-	//Handle events on queue
 	while( SDL_PollEvent( &e ) != 0 )
 	{
-		//User requests quit
 		if( e.type == SDL_QUIT )
 		{
 			endGame = true;
 		}
-		//User presses a key
 		else if( e.type == SDL_KEYDOWN )
 		{
 			int c = e.key.keysym.sym;
