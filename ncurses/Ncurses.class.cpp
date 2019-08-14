@@ -9,11 +9,6 @@ Ncurses::Ncurses(void)
 {
 }
 
-Ncurses::Ncurses(Ncurses const &val)
-{
-    *this = val;
-}
-
 Ncurses::~Ncurses(void)
 {
     erase();
@@ -31,7 +26,7 @@ void Ncurses::draw(Snake &snake, int size, Food &food, Score_Time &score_time, b
         int duration = (std::clock() - score_time.getStart()) / (int)CLOCKS_PER_SEC;
         while ((c = getch()) != 27)
         {
-            
+
             int minutes;
             int hours;
             int seconds;
@@ -203,7 +198,7 @@ Direction Ncurses::checkButton(Direction direction, bool &endGame, Event &event,
             return right;
         }
     }
-     if (event == stop && c == 32)
+    if (event == stop && c == 32)
         event = go;
     if (c == 27)
         endGame = true;
@@ -222,7 +217,6 @@ Direction Ncurses::checkButton(Direction direction, bool &endGame, Event &event,
         event = sfml;
         changeLibrary = true;
     }
-   
 
     return direction;
 }

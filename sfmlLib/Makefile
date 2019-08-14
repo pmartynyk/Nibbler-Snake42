@@ -41,7 +41,7 @@ sfml:
 	@curl -OL http://www.sfml-dev.org/files/SFML-2.5.0-macOS-clang.tar.gz
 	@tar zxvfC 'SFML-2.5.0-macOS-clang.tar.gz' $(SFML_DIR)
 	@rm -rf SFML-2.5.0-macOS-clang.tar.gz
-	# @cd SFML_Lib/SFML-2.5.0-macOS-clang/Frameworks && ln -s ../extlibs/freetype.framework
+	@cd SFML_Lib/SFML-2.5.0-macOS-clang/Frameworks && ln -s ../extlibs/freetype.framework
 
 clean:
 	@rm -rf $(SFML_DIR)

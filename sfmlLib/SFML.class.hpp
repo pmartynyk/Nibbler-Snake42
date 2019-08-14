@@ -12,6 +12,9 @@
 
 class SFML : public IDynamicLibrary
 {
+private:
+    sf::RenderWindow window;
+
 public:
     SFML(void);
     SFML(SFML const &val);
@@ -28,7 +31,5 @@ public:
 
     Direction checkButton(Direction direction, bool &endGame, Event &event, bool &changeLibrary, bool &move);
 };
-
-
 
 #endif

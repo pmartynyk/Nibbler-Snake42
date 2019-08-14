@@ -9,11 +9,6 @@ SFML::SFML(void)
 {
 }
 
-SFML::SFML(SFML const &val)
-{
-    *this = val;
-}
-
 SFML::~SFML(void)
 {
 }
@@ -22,7 +17,9 @@ void SFML::draw(Snake &snake, int size, Food &food, Score_Time &score_time, bool
 {
     if (endGame)
     {
-        
+        window.clear();
+        window.close();
+        system("reset");
     }
     else
     {
@@ -30,25 +27,27 @@ void SFML::draw(Snake &snake, int size, Food &food, Score_Time &score_time, bool
         this->drowFood(snake, food, size);
         this->drawSnake(snake);
         this->drowScore(score_time);
+        window.display();
     }
 }
 
 void SFML::drowMap(Snake &snake, int size)
 {
     (void)snake;
-    // (void)size;
-   
-    sf::RenderWindow window;
-    window.create(sf::VideoMode(size, size), "My window");
+    (void)size;
+
+    sf::Event event;
+    window.create(sf::VideoMode(size * 20, size * 20), "NIBBLER");
     while (window.isOpen())
     {
-        // check all the window's events that were triggered since the last iteration of the loop
-        sf::Event event;
         while (window.pollEvent(event))
         {
-            // "close requested" event: we close the window
             if (event.type == sf::Event::Closed)
+            {
+                window.clear();
                 window.close();
+                system("reset");
+            }
         }
     }
 }
@@ -150,46 +149,44 @@ void SFML::drowScore(Score_Time &score_time)
 
 Direction SFML::checkButton(Direction direction, bool &endGame, Event &event, bool &changeLibrary, bool &move)
 {
-    int c = 0;
-    (void)move;
-
-    // c = getch();
-    // if (move)
-    // {
-    //     if (c == KEY_DOWN && direction != up)
-    //     {
-    //         move = false;
-    //         return down;
-    //     }
-    //     else if (c == KEY_UP && direction != down)
-    //     {
-    //         move = false;
-    //         return up;
-    //     }
-    //     else if (c == KEY_LEFT && direction != right)
-    //     {
-    //         move = false;
-    //         return left;
-    //     }
-    //     else if (c == KEY_RIGHT && direction != left)
-    //     {
-    //         move = false;
-    //         return right;
-    //     }
-    // }
-    if (c == 27)
+    if (move)
+    {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && direction != up)
+        {
+            move = false;
+            return down;
+        }
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && direction != down)
+        {
+            move = false;
+            return up;
+        }
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && direction != right)
+        {
+            move = false;
+            return left;
+        }
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && direction != left)
+        {
+            move = false;
+            return right;
+        }
+    }
+    if (event == stop && sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+        event = go;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
         endGame = true;
-    else if (c == 49)
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1))
     {
         event = ncurses;
         changeLibrary = true;
     }
-    else if (c == 50)
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2))
     {
         event = sdl;
         changeLibrary = true;
     }
-    else if (c == 51)
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num3))
     {
         event = sfml;
         changeLibrary = true;
