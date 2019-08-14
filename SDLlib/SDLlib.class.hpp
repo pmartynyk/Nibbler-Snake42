@@ -10,29 +10,6 @@
 // #include <SDL2/SDL.h>
 #include "./SDL/SDL2.framework/Versions/A/Headers/SDL.h"
 
-//Key press surfaces constants
-enum KeyPressSurfaces
-{
-	KEY_PRESS_SURFACE_DEFAULT,
-	KEY_PRESS_SURFACE_UP,
-	KEY_PRESS_SURFACE_DOWN,
-	KEY_PRESS_SURFACE_LEFT,
-	KEY_PRESS_SURFACE_RIGHT,
-	KEY_PRESS_SURFACE_TOTAL
-};
-
-//The window we'll be rendering to
-SDL_Window* gWindow = NULL;
-	
-//The surface contained by the window
-SDL_Surface* gScreenSurface = NULL;
-
-//The images that correspond to a keypress
-SDL_Surface* gKeyPressSurfaces[ KEY_PRESS_SURFACE_TOTAL ];
-
-//Current displayed image
-SDL_Surface* gCurrentSurface = NULL;
-
 class SDLlib : public IDynamicLibrary
 {
 private:
@@ -49,17 +26,10 @@ public:
     void drowMap(Snake &snake, int size);
     void drowFood(Snake &snake, Food &food, int size);
     void drowScore(Score_Time &score_time);
-    void fillMap(Snake &snake, int size);
     bool notSnake(Snake &snake, int i, int j);
     void drawSnake(Snake &snake);
-    // void moveSnake(Snake &snake, Direction direction);
-    // void checkCollision(Snake &snake, bool &endGame, int size);
-    // void checkFood(Snake &snake, Food &food, Score_Time &score_time);
 
     Direction checkButton(Direction direction, bool &endGame, Event &event, bool &changeLibrary, bool &move);
-
-    void close();
-    bool init(int size);
 };
 
 #endif //SDLLIB_CLASS_HPP

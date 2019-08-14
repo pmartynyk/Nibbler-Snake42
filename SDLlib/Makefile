@@ -49,7 +49,7 @@
 NAME 		=	SDLlib.so
 
 COM			=	clang++
-FLAGS		=	-std=c++11 -O3 #-Wall -Wextra -Werror 
+FLAGS		=	-std=c++11 -O3 -Wall -Wextra -Werror 
 
 SDL_DIR		=	./SDL
 SDL_FRM		=	-F $(SDL_DIR)

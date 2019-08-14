@@ -5,6 +5,21 @@ extern "C" IDynamicLibrary *createLib(void)
 	return (new SDLlib());
 }
 
+void draw_circle(SDL_Renderer * renderer, SDL_Point center)
+{
+	int radius = 8;
+	for (int w = 0; w < radius * 2; w++)
+	{
+		for (int h = 0; h < radius * 2; h++)
+		{
+			int dx = radius - w;
+			int dy = radius - h;
+			if ((dx*dx + dy*dy) <= (radius * radius))
+				SDL_RenderDrawPoint(renderer, center.x + dx + 8, center.y + dy + 8);
+		}
+	}
+}
+
 SDLlib::SDLlib(void) : _window(nullptr), _renderer(nullptr) {
 	if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
 	{
@@ -12,6 +27,7 @@ SDLlib::SDLlib(void) : _window(nullptr), _renderer(nullptr) {
 		exit(-1);
 	}
 }
+
 SDLlib::~SDLlib(void) {
 	SDL_DestroyRenderer(_renderer);
 	SDL_DestroyWindow( _window );
@@ -21,67 +37,43 @@ SDLlib::~SDLlib(void) {
 
 void SDLlib::draw(Snake &snake, int size, Food &food, Score_Time &score_time, bool &endGame)
 {
-    SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
-    SDL_RenderClear(_renderer);
+	if (endGame) {
+		(void)score_time;
+	}
+	else {
+		SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
+		SDL_RenderClear(_renderer);
 
-	this->drawSnake(snake);
-	this->drowFood(snake, food, size);
-    SDL_RenderPresent(_renderer);
+		static bool i = true;
 
-//------
-	// static bool tmp = init(size);
-	// static bool media = loadMedia();
-	
-
-	/* if (endGame)
-		this->close();
-	else
-	{
-		this->drowMap(snake, size);
-		this->drowFood(snake, food, size);
+		if (i) {
+			this->drowMap(snake, size);
+			i = false;
+		}
+		
 		this->drawSnake(snake);
-		this->drowScore(score_time);
-	} */
+		this->drowFood(snake, food, size);
+		SDL_RenderPresent(_renderer);
+	}
 }
 
-void SDLlib::drowMap(Snake &snake, int size)
+void SDLlib::drowMap(Snake &, int size)
 {
 	_window = SDL_CreateWindow("Nibbler", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, size * 16, size * 16, SDL_WINDOW_SHOWN);
-    if (_window == nullptr)
-    {
-		std::cout << "Failed to create a window. SDL Error: " <<  SDL_GetError() << std::endl;
-        exit(-1);
-    }
-    _renderer = SDL_CreateRenderer(_window, -1, 0);
-}
-
-void SDLlib::fillMap(Snake &snake, int size)
-{
-	(void)snake;
-	for (int i = 1; i < size - 1; i++)
+	if (_window == nullptr)
 	{
-		for (int j = 1; j < size - 1; j++)
-		{
-			if (notSnake(snake, i, j))
-			{
-				/* attron(COLOR_PAIR(3));
-				mvprintw(i, j, ".");
-				attroff(COLOR_PAIR(3)); */
-			}
-		}
+		std::cout << "Failed to create a window. SDL Error: " <<  SDL_GetError() << std::endl;
+		exit(-1);
 	}
-	// refresh();
+	_renderer = SDL_CreateRenderer(_window, -1, 0);
 }
 
 void SDLlib::drowFood(Snake &snake, Food &food, int size)
 {
-	SDL_Rect rect;
+	SDL_Point point;
 
 	if (!food.isAlive())
 	{
-		rect.w = 16;
-		rect.h = 16;
-
 		int tmpX;
 		int tmpY;
 		tmpX = rand() % (size - 2) + 1;
@@ -93,41 +85,18 @@ void SDLlib::drowFood(Snake &snake, Food &food, int size)
 			tmpY = rand() % (size - 2) + 1;
 		}
 		food.setCord(tmpX, tmpY);
-		rect.x = food.getX() * 16;
-		rect.y = food.getY() * 16;
-		SDL_SetRenderDrawColor(_renderer, 0, 0, 200, 255);
-    	SDL_RenderFillRect(_renderer, &rect);
 	}
-	else
-	{
-		rect.w = 16;
-		rect.h = 16;
-		rect.x = food.getX() * 16;
-		rect.y = food.getY() * 16;
-		SDL_SetRenderDrawColor(_renderer, 0, 0, 200, 255);
-    	SDL_RenderFillRect(_renderer, &rect);
-	}
-
-	//----------------------
-/* 	SDL_Rect rect;
-
-    std::pair<int, int> crd = fruit.getCoords();
-    rect.w = 16;
-    rect.h = 16;
-    rect.x = crd.first * 16;
-    rect.y = crd.second * 16;
-    SDL_SetRenderDrawColor(_renderer, 0, 0, 200, 255);
-
-    SDL_RenderFillRect(_renderer, &rect); */
+	point.x = food.getX() * 16;
+	point.y = food.getY() * 16;
+	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 0);
+	draw_circle(_renderer, point);
 }
 
 bool SDLlib::notSnake(Snake &snake, int i, int j)
 {
-	std::list<Unit *>::const_iterator it;
-	std::list<Unit *>::const_iterator ite = snake.getUnits().end();
-	for (it = snake.getUnits().begin(); it != ite; ++it)
+	for (auto it : snake.getUnits())
 	{
-		if ((*it)->getX() == j && (*it)->getY() == i)
+		if ((*it).getX() == j && (*it).getY() == i)
 		{
 			return false;
 		}
@@ -138,30 +107,25 @@ bool SDLlib::notSnake(Snake &snake, int i, int j)
 void SDLlib::drawSnake(Snake &snake)
 {
 	SDL_RenderClear(_renderer);
-	SDL_Rect rect;
+	SDL_Point point;
 
-	rect.w = 16;
-	rect.h = 16;
-
-	std::list<Unit *>::const_iterator it;
-    std::list<Unit *>::const_iterator ite = snake.getUnits().end();
-    for (it = snake.getUnits().begin(); it != ite; ++it)
-    {
-        if ((*it)->isHead())
-        {
-			rect.x = (*it)->getX() * 16;
-			rect.y = (*it)->getY() * 16;
-            SDL_SetRenderDrawColor(_renderer, 200, 0, 200, 255);
-			SDL_RenderFillRect(_renderer, &rect);
-        }
-        else
-        {
-            rect.x = (*it)->getX() * 16;
-			rect.y = (*it)->getY() * 16;
-            SDL_SetRenderDrawColor(_renderer, 0, 0, 200, 255);
-			SDL_RenderFillRect(_renderer, &rect);
-        }
-    }
+	for (auto it : snake.getUnits())
+	{
+		if ((*it).isHead())
+		{
+			point.x = (*it).getX() * 16;
+			point.y = (*it).getY() * 16;
+			SDL_SetRenderDrawColor(_renderer, 200, 0, 200, 255);
+			draw_circle(_renderer, point);
+		}
+		else
+		{
+			point.x = (*it).getX() * 16;
+			point.y = (*it).getY() * 16;
+			SDL_SetRenderDrawColor(_renderer, 0, 0, 200, 255);
+			draw_circle(_renderer, point);
+		}
+	}
 }
 
 void SDLlib::drowScore(Score_Time &score_time)
@@ -193,49 +157,51 @@ Direction SDLlib::checkButton(Direction direction, bool &endGame, Event &event, 
 		//User presses a key
 		else if( e.type == SDL_KEYDOWN )
 		{
-			//Select surfaces based on key press
-			switch( e.key.keysym.sym )
+			int c = e.key.keysym.sym;
+			if (move)
 			{
-				case SDLK_UP:
+				if (c == SDLK_DOWN && direction != up)
 				{
-					direction = up;
-					gCurrentSurface = gKeyPressSurfaces[ KEY_PRESS_SURFACE_UP ];
+					move = false;
+					return down;
 				}
-				break;
-
-				case SDLK_DOWN:
+				else if (c == SDLK_UP && direction != down)
 				{
-					direction = down;
-					gCurrentSurface = gKeyPressSurfaces[ KEY_PRESS_SURFACE_DOWN ];
+					move = false;
+					return up;
 				}
-				break;
-
-				case SDLK_LEFT:
+				else if (c == SDLK_LEFT && direction != right)
 				{
-					direction = left;
-					gCurrentSurface = gKeyPressSurfaces[ KEY_PRESS_SURFACE_LEFT ];
+					move = false;
+					return left;
 				}
-				break;
-
-				case SDLK_RIGHT:
+				else if (c == SDLK_RIGHT && direction != left)
 				{
-					direction = right;
-					gCurrentSurface = gKeyPressSurfaces[ KEY_PRESS_SURFACE_RIGHT ];
+					move = false;
+					return right;
 				}
-				break;
-
-				case SDLK_ESCAPE:
-				{
-					endGame = true;
-				}
-				break;
-
-				default:
-				{
-					gCurrentSurface = gKeyPressSurfaces[ KEY_PRESS_SURFACE_DEFAULT ];
-				}
-				break;
 			}
+			if (event == stop && c == 32)
+				event = go;
+			if (c == SDLK_ESCAPE)
+			{
+				endGame = true;
+			}
+			else if (c == SDLK_1)
+			{
+				event = ncurses;
+				changeLibrary = true;
+			}
+			else if (c == SDLK_2)
+			{
+				event = sdl;
+				changeLibrary = true;
+			}
+			else if (c == SDLK_3)
+			{
+				event = sfml;
+				changeLibrary = true;
+			} 
 		}
 	}
 	return direction;
