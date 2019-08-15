@@ -26,7 +26,6 @@ void Ncurses::draw(Snake &snake, int size, Food &food, Score_Time &score_time, b
         int duration = (std::clock() - score_time.getStart()) / (int)CLOCKS_PER_SEC;
         while ((c = getch()) != 27)
         {
-
             int minutes;
             int hours;
             int seconds;

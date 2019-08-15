@@ -124,7 +124,7 @@ void SDLlib::drawSnake(Snake &snake)
 		{
 			point.x = it->getX() * 16;
 			point.y = it->getY() * 16;
-			SDL_SetRenderDrawColor(_renderer, 200, 0, 200, 255);
+			SDL_SetRenderDrawColor(_renderer, 0, 255, 0, 0);
 			drawCircle(_renderer, point);
 		}
 		else
