@@ -15,6 +15,16 @@ class SFML : public IDynamicLibrary
 private:
     sf::RenderWindow window;
 
+    sf::Texture _t1;
+    sf::Texture _t2;
+    sf::Texture _t3;
+    sf::Texture _t4;
+
+    sf::Sprite _sprite1;
+    sf::Sprite _sprite2;
+    sf::Sprite _sprite3;
+    sf::Sprite _sprite4;
+
 public:
     SFML(void);
     SFML(SFML const &val);
@@ -25,7 +35,6 @@ public:
     void drowMap(Snake &snake, int size);
     void drowFood(Snake &snake, Food &food, int size);
     void drowScore(Score_Time &score_time);
-    void fillMap(Snake &snake, int size);
     bool notSnake(Snake &snake, int i, int j);
     void drawSnake(Snake &snake);
 

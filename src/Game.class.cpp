@@ -53,8 +53,7 @@ void Game::play(void)
                 Logic().logic(this->_snake, this->_food, this->_direction, this->_endGame, this->_size, this->_score_time, this->_music, this->_fps);
             this->_library->draw(this->_snake, this->_size, this->_food, this->_score_time, this->_endGame);
             t2 = clock() / (CLOCKS_PER_SEC / _fps);
-            this->_move = true;
-            
+            this->_move = true;            
         }
     }
 }

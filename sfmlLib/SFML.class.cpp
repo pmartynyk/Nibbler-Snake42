@@ -7,6 +7,15 @@ extern "C" IDynamicLibrary *createLib(void)
 
 SFML::SFML(void)
 {
+    _t1.loadFromFile("images/white.png");
+    _t2.loadFromFile("images/red.png");
+    _t3.loadFromFile("images/green.png");
+    _t4.loadFromFile("images/black.png");
+
+    _sprite1.setTexture(_t1);
+    _sprite2.setTexture(_t2);
+    _sprite3.setTexture(_t3);
+    _sprite4.setTexture(_t4);
 }
 
 SFML::~SFML(void)
@@ -34,40 +43,25 @@ void SFML::draw(Snake &snake, int size, Food &food, Score_Time &score_time, bool
 void SFML::drowMap(Snake &snake, int size)
 {
     (void)snake;
-    (void)size;
-
     sf::Event event;
-    window.create(sf::VideoMode(size * 20, size * 20), "NIBBLER");
-    while (window.isOpen())
+    window.create(sf::VideoMode(size * 16, size * 16), "NIBBLER");
+    while (window.pollEvent(event))
     {
-        while (window.pollEvent(event))
+        if (event.type == sf::Event::Closed)
         {
-            if (event.type == sf::Event::Closed)
-            {
-                window.clear();
-                window.close();
-                system("reset");
-            }
+            window.close();
         }
     }
-}
+    window.clear();
 
-void SFML::fillMap(Snake &snake, int size)
-{
-    (void)snake;
     for (int i = 1; i < size - 1; i++)
     {
         for (int j = 1; j < size - 1; j++)
         {
-            if (notSnake(snake, i, j))
-            {
-                // attron(COLOR_PAIR(3));
-                // mvprintw(i, j, ".");
-                // attroff(COLOR_PAIR(3));
-            }
+            _sprite1.setPosition(i * 16, j * 16);
+            window.draw(_sprite1);
         }
     }
-    // refresh();
 }
 
 void SFML::drowFood(Snake &snake, Food &food, int size)
@@ -85,15 +79,13 @@ void SFML::drowFood(Snake &snake, Food &food, int size)
             tmpY = rand() % (size - 2) + 1;
         }
         food.setCord(tmpX, tmpY);
-        // attron(COLOR_PAIR(4));
-        // mvprintw(food.getY(), food.getX(), "o");
-        // attroff(COLOR_PAIR(4));
+        _sprite4.setPosition(food.getX() * 16, food.getY() * 16);
+        window.draw(_sprite4);
     }
     else
     {
-        // attron(COLOR_PAIR(4));
-        // mvprintw(food.getY(), food.getX(), "o");
-        // attroff(COLOR_PAIR(4));
+        _sprite4.setPosition(food.getX() * 16, food.getY() * 16);
+        window.draw(_sprite4);
     }
 }
 
@@ -119,18 +111,15 @@ void SFML::drawSnake(Snake &snake)
     {
         if ((*it)->isHead())
         {
-            // attron(COLOR_PAIR(2));
-            // mvprintw((*it)->getY(), (*it)->getX(), "@");
-            // attroff(COLOR_PAIR(2));
+            _sprite3.setPosition((*it)->getX() * 16, (*it)->getY() * 16);
+            window.draw(_sprite3);
         }
         else
         {
-            // attron(COLOR_PAIR(1));
-            // mvprintw((*it)->getY(), (*it)->getX(), "@");
-            // attroff(COLOR_PAIR(1));
+            _sprite2.setPosition((*it)->getX() * 16, (*it)->getY() * 16);
+            window.draw(_sprite2);
         }
     }
-    // refresh();
 }
 
 void SFML::drowScore(Score_Time &score_time)
