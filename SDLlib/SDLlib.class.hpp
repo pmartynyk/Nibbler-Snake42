@@ -15,6 +15,9 @@ class SDLlib : public IDynamicLibrary
 private:
     SDL_Window      *_window;
     SDL_Renderer    *_renderer;
+    TTF_Font        *_font;
+    SDL_Color       _colour;
+
 public:
     SDLlib(void);
     SDLlib(SDLlib const &val);

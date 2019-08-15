@@ -7,7 +7,7 @@ extern "C" IDynamicLibrary *createLib(void)
 	return (new SDLlib());
 }
 
-void draw_circle(SDL_Renderer * renderer, SDL_Point center)
+void drawCircle(SDL_Renderer *renderer, SDL_Point &center)
 {
 	int radius = 8;
 	for (int w = 0; w < radius * 2; w++)
@@ -22,7 +22,8 @@ void draw_circle(SDL_Renderer * renderer, SDL_Point center)
 	}
 }
 
-SDLlib::SDLlib(void) : _window(nullptr), _renderer(nullptr) {
+SDLlib::SDLlib(void)
+	: _window(nullptr), _renderer(nullptr), _font(nullptr), _colour({ 255, 255, 255 , 0}) {
 	if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
 	{
 		std::cout << "SDL could not initialize! SDL Error: " <<  SDL_GetError() << std::endl;
@@ -33,21 +34,33 @@ SDLlib::SDLlib(void) : _window(nullptr), _renderer(nullptr) {
 		std::cout << "SDL could not initialize! SDL_ttf Error: " <<  SDL_GetError() << std::endl;
 		exit(-1);
 	}
+	this->_font = TTF_OpenFont("/System/Library/Fonts/Times.ttc", 25);
+	if( !_font )
+	{
+		std::cout << "SDL could not initialize! SDL_ttf Error: " <<  TTF_GetError() << std::endl;
+		exit(-1);
+	}
 }
 
 SDLlib::~SDLlib(void) {
 	SDL_DestroyRenderer(_renderer);
 	SDL_DestroyWindow( _window );
-	_window = NULL;
+	_window = nullptr;
 	SDL_Quit();
 
-	 TTF_Quit();
+	TTF_CloseFont(_font);
+	_font = nullptr;
+	TTF_Quit();
 }
 
 void SDLlib::draw(Snake &snake, int size, Food &food, Score_Time &score_time, bool &endGame)
 {
 	if (endGame) {
 		this->drowScore(score_time);
+		SDL_Event e;
+		SDL_PollEvent( &e );
+		while (!((e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE) || e.type == SDL_QUIT))
+			SDL_PollEvent( &e );
 	}
 	else {
 		SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
@@ -99,14 +112,14 @@ void SDLlib::drowFood(Snake &snake, Food &food, int size)
 	point.x = food.getX() * 16;
 	point.y = food.getY() * 16;
 	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 0);
-	draw_circle(_renderer, point);
+	drawCircle(_renderer, point);
 }
 
 bool SDLlib::notSnake(Snake &snake, int i, int j)
 {
 	for (auto it : snake.getUnits())
 	{
-		if ((*it).getX() == j && (*it).getY() == i)
+		if (it->getX() == j && it->getY() == i)
 		{
 			return false;
 		}
@@ -121,19 +134,19 @@ void SDLlib::drawSnake(Snake &snake)
 
 	for (auto it : snake.getUnits())
 	{
-		if ((*it).isHead())
+		if (it->isHead())
 		{
-			point.x = (*it).getX() * 16;
-			point.y = (*it).getY() * 16;
+			point.x = it->getX() * 16;
+			point.y = it->getY() * 16;
 			SDL_SetRenderDrawColor(_renderer, 200, 0, 200, 255);
-			draw_circle(_renderer, point);
+			drawCircle(_renderer, point);
 		}
 		else
 		{
-			point.x = (*it).getX() * 16;
-			point.y = (*it).getY() * 16;
+			point.x = it->getX() * 16;
+			point.y = it->getY() * 16;
 			SDL_SetRenderDrawColor(_renderer, 0, 0, 200, 255);
-			draw_circle(_renderer, point);
+			drawCircle(_renderer, point);
 		}
 	}
 }
@@ -180,14 +193,8 @@ void SDLlib::drowScore(Score_Time &score_time)
 							<< std::setw(2) << std::setfill('0') << minutes << ":"
 							<< std::setw(2) << std::setfill('0') << seconds;
 
-	TTF_Font * font = TTF_OpenFont("/System/Library/Fonts/Times.ttc", 25);
-	if( !font )
-	{
-		std::cout << "SDL could not initialize! SDL_ttf Error: " <<  TTF_GetError() << std::endl;
-		exit(-1);
-	}
-	SDL_Color color = { 255, 255, 255 , 0};
-	SDL_Surface * surface = TTF_RenderText_Solid(font, stringStream.str().c_str(), color);
+	
+	SDL_Surface * surface = TTF_RenderText_Solid(_font, stringStream.str().c_str(), _colour);
 	SDL_Texture * texture = SDL_CreateTextureFromSurface(_renderer, surface);
 
 	int texW = 0;
@@ -197,13 +204,6 @@ void SDLlib::drowScore(Score_Time &score_time)
 
 	SDL_RenderCopy(_renderer, texture, NULL, &dstrect);
 	SDL_RenderPresent(_renderer);
-
-	/* SDL_Event e;
-	SDL_PollEvent( &e );
-	while (!((e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE) || e.type == SDL_QUIT))
-		SDL_PollEvent( &e ); */
-
-	TTF_CloseFont(font);
 }
 
 Direction SDLlib::checkButton(Direction direction, bool &endGame, Event &event, bool &changeLibrary, bool &move)
