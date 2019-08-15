@@ -7,23 +7,9 @@ extern "C" IDynamicLibrary *createLib(void)
 	return (new SDLlib());
 }
 
-void drawCircle(SDL_Renderer *renderer, SDL_Point &center)
-{
-	int radius = 8;
-	for (int w = 0; w < radius * 2; w++)
-	{
-		for (int h = 0; h < radius * 2; h++)
-		{
-			int dx = radius - w;
-			int dy = radius - h;
-			if ((dx*dx + dy*dy) <= (radius * radius))
-				SDL_RenderDrawPoint(renderer, center.x + dx + 8, center.y + dy + 8);
-		}
-	}
-}
-
 SDLlib::SDLlib(void)
-	: _window(nullptr), _renderer(nullptr), _font(nullptr), _colour({ 255, 255, 255 , 0}) {
+	: _window(nullptr), _renderer(nullptr), _font(nullptr),
+	  _colour({ 255, 255, 255 , 0}), _size(0), _endGame(false) {
 	if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
 	{
 		std::cout << "SDL could not initialize! SDL Error: " <<  SDL_GetError() << std::endl;
@@ -56,22 +42,20 @@ SDLlib::~SDLlib(void) {
 void SDLlib::draw(Snake &snake, int size, Food &food, Score_Time &score_time, bool &endGame)
 {
 	if (endGame) {
+		this->_endGame = endGame;
 		this->drowScore(score_time);
-		SDL_Event e;
-		SDL_PollEvent( &e );
-		while (!((e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE) || e.type == SDL_QUIT))
-			SDL_PollEvent( &e );
 	}
 	else {
 		SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
 		SDL_RenderClear(_renderer);
-		static bool i = true;
 
-		if (i) {
-			this->drowMap(snake, size);
-			i = false;
-		}
-		// this->drowScore(score_time);
+		this->drowMap(snake, size);
+		this->_endGame = endGame;
+		SDL_Rect field = {16, 16, (size - 2) * 16, (size - 2) * 16};
+		SDL_SetRenderDrawColor(_renderer, 30, 30, 30, SDL_ALPHA_OPAQUE);
+		SDL_RenderFillRect(_renderer, &field);
+
+		this->drowScore(score_time);
 		this->drawSnake(snake);
 		this->drowFood(snake, food, size);
 		
@@ -81,14 +65,17 @@ void SDLlib::draw(Snake &snake, int size, Food &food, Score_Time &score_time, bo
 
 void SDLlib::drowMap(Snake &, int size)
 {
-	_window = SDL_CreateWindow("Nibbler", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, size * 16, size * 16, SDL_WINDOW_SHOWN);
-	if (_window == nullptr)
-	{
-		std::cout << "Failed to create a window. SDL Error: " <<  SDL_GetError() << std::endl;
-		exit(-1);
+	if (!_window && !_renderer) {
+		this->_size = size;
+		_window = SDL_CreateWindow("Nibbler", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, size * 16, size * 16, SDL_WINDOW_SHOWN);
+		if (_window == nullptr)
+		{
+			std::cout << "Failed to create a window. SDL Error: " <<  SDL_GetError() << std::endl;
+			exit(-1);
+		}
+		_renderer = SDL_CreateRenderer(_window, -1, 0);
+		SDL_RenderClear(_renderer);
 	}
-	_renderer = SDL_CreateRenderer(_window, -1, 0);
-	SDL_RenderClear(_renderer);
 }
 
 void SDLlib::drowFood(Snake &snake, Food &food, int size)
@@ -129,7 +116,6 @@ bool SDLlib::notSnake(Snake &snake, int i, int j)
 
 void SDLlib::drawSnake(Snake &snake)
 {
-	// SDL_RenderClear(_renderer);
 	SDL_Point point;
 
 	for (auto it : snake.getUnits())
@@ -152,7 +138,7 @@ void SDLlib::drawSnake(Snake &snake)
 }
 
 
-void getStatus(Score_Time &score_time, std::pair <std::string, std::string> &sc)
+void SDLlib::getStatus(Score_Time &score_time, std::pair <std::string, std::string> &sc)
 {
     int duration = (std::clock() - score_time.getStart()) / (int)CLOCKS_PER_SEC;
     int minutes;
@@ -165,7 +151,7 @@ void getStatus(Score_Time &score_time, std::pair <std::string, std::string> &sc)
     seconds = seconds - minutes * 60;
 
 	std::ostringstream score;
-	score << "SCORE: " << score_time.getScore();
+	score << "SCORE: " << std::setw(3) << std::setfill('0') << score_time.getScore();
 	sc.first = score.str().c_str();
 
 	std::ostringstream t;
@@ -177,33 +163,48 @@ void getStatus(Score_Time &score_time, std::pair <std::string, std::string> &sc)
 
 void SDLlib::drowScore(Score_Time &score_time)
 {
-	// SDL_RenderClear(_renderer);
-	int duration = (std::clock() - score_time.getStart()) / (int)CLOCKS_PER_SEC;
-	int minutes;
-	int hours;
-	int seconds;
-	seconds = duration;
-	minutes = duration / 60;
-	hours = minutes / 60;
-	minutes = minutes - hours * 60;
-	seconds = seconds - minutes * 60;
-	std::ostringstream stringStream;
-	stringStream << "SCORE: " << score_time.getScore() << std::endl
-				 << "TIME: " << std::setw(2) << std::setfill('0') << hours << ":"
-							<< std::setw(2) << std::setfill('0') << minutes << ":"
-							<< std::setw(2) << std::setfill('0') << seconds;
+	std::pair<std::string, std::string>	sc;
+	SDL_Rect							pos{};
+	SDL_Surface							*surface;
+	SDL_Texture							*texture;
 
-	
-	SDL_Surface * surface = TTF_RenderText_Solid(_font, stringStream.str().c_str(), _colour);
-	SDL_Texture * texture = SDL_CreateTextureFromSurface(_renderer, surface);
+	getStatus(score_time, sc);	
 
-	int texW = 0;
-	int texH = 0;
-	SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
-	SDL_Rect dstrect = { 0, 0, texW, texH };
+	if (!this->_endGame) {
+		std::ostringstream tmp;
+		tmp << sc.first << "\t" << sc.second;
+		surface = TTF_RenderText_Solid(_font, tmp.str().c_str(), _colour);
+		texture = SDL_CreateTextureFromSurface(_renderer, surface);
+		SDL_QueryTexture(texture, NULL, NULL, &pos.w, &pos.h);
+		SDL_RenderCopy(_renderer, texture, NULL, &pos);
+	}
+	else {
+		int texW = 0;
+		int texH = 0;
+		surface = TTF_RenderText_Solid(_font, "GAME OVER", _colour);
+		texture = SDL_CreateTextureFromSurface(_renderer, surface);
+		SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
+		pos = { _size / 2 * 16 - (texW / 2), (_size - 1) / 2 * 16, texW, texH };
+		SDL_RenderCopy(_renderer, texture, NULL, &pos);
 
-	SDL_RenderCopy(_renderer, texture, NULL, &dstrect);
-	SDL_RenderPresent(_renderer);
+		surface = TTF_RenderText_Solid(_font, sc.first.c_str(), _colour);
+		texture = SDL_CreateTextureFromSurface(_renderer, surface);
+		SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
+		pos.y += 20;
+		SDL_RenderCopy(_renderer, texture, NULL, &pos);
+
+		surface = TTF_RenderText_Solid(_font, sc.second.c_str(), _colour);
+		texture = SDL_CreateTextureFromSurface(_renderer, surface);
+		SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
+		pos.y += 20;
+		SDL_RenderCopy(_renderer, texture, NULL, &pos);
+		SDL_RenderPresent(_renderer);
+		
+		SDL_Event e;
+		SDL_PollEvent( &e );
+		while (!((e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE) || e.type == SDL_QUIT))
+			SDL_PollEvent( &e );
+	}
 }
 
 Direction SDLlib::checkButton(Direction direction, bool &endGame, Event &event, bool &changeLibrary, bool &move)
@@ -266,4 +267,19 @@ Direction SDLlib::checkButton(Direction direction, bool &endGame, Event &event, 
 		}
 	}
 	return direction;
+}
+
+void SDLlib::drawCircle(SDL_Renderer *renderer, SDL_Point &center)
+{
+	int radius = 8;
+	for (int w = 0; w < radius * 2; w++)
+	{
+		for (int h = 0; h < radius * 2; h++)
+		{
+			int dx = radius - w;
+			int dy = radius - h;
+			if ((dx*dx + dy*dy) <= (radius * radius))
+				SDL_RenderDrawPoint(renderer, center.x + dx + 8, center.y + dy + 8);
+		}
+	}
 }
