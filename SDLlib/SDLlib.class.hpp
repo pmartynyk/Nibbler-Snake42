@@ -22,8 +22,8 @@ private:
 
 public:
     SDLlib(void);
-    SDLlib(SDLlib const &val);
-    SDLlib &operator=(SDLlib const &val);
+    SDLlib(SDLlib const &val) = delete;
+    SDLlib &operator=(SDLlib const &val) = delete;
     ~SDLlib(void);
 
     void draw(Snake &snake, int size, Food &food, Score_Time &score_time, bool &endGame);

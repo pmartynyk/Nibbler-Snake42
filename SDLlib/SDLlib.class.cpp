@@ -137,7 +137,6 @@ void SDLlib::drawSnake(Snake &snake)
 	}
 }
 
-
 void SDLlib::getStatus(Score_Time &score_time, std::pair <std::string, std::string> &sc)
 {
     int duration = (std::clock() - score_time.getStart()) / (int)CLOCKS_PER_SEC;
