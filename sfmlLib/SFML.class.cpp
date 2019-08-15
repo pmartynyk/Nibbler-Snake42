@@ -13,7 +13,7 @@ SFML::SFML(void) : _window(), _font(), _endGame(false)
 	_sprite2.setTexture(_t2);
 	_sprite3.setTexture(_t3);
 	_sprite4.setTexture(_t4);
-	
+
 	_sprite1.setTextureRect(sf::IntRect(0, 0, 28, 28));
 	_sprite2.setTextureRect(sf::IntRect(0, 0, 28, 28));
 	_sprite3.setTextureRect(sf::IntRect(0, 0, 28, 28));
@@ -23,7 +23,6 @@ SFML::SFML(void) : _window(), _font(), _endGame(false)
 	_sprite2.setColor(sf::Color(0, 0, 255));
 	_sprite3.setColor(sf::Color(0, 255, 0));
 	_sprite4.setColor(sf::Color(255, 0, 0));
-
 
 	if (!_font.loadFromFile("/System/Library/Fonts/Times.ttc"))
 	{
@@ -43,7 +42,6 @@ void SFML::draw(Snake &snake, int size, Food &food, Score_Time &score_time, bool
 		this->_endGame = endGame;
 		this->drowScore(score_time);
 
-		
 		_window.clear();
 		_window.close();
 		system("reset");
@@ -61,7 +59,8 @@ void SFML::draw(Snake &snake, int size, Food &food, Score_Time &score_time, bool
 void SFML::drowMap(Snake &snake, int size)
 {
 	(void)snake;
-	if (!this->_window.isOpen()) {
+	if (!this->_window.isOpen())
+	{
 		_window.create(sf::VideoMode(size * 30, size * 30), "NIBBLER", sf::Style::Titlebar | sf::Style::Close);
 	}
 	_window.clear();
@@ -138,26 +137,26 @@ void SFML::drawSnake(Snake &snake)
 	}
 }
 
-void SFML::getStatus(Score_Time &score_time, std::pair <std::string, std::string> &sc)
+void SFML::getStatus(Score_Time &score_time, std::pair<std::string, std::string> &sc)
 {
-    int duration = (std::clock() - score_time.getStart()) / (int)CLOCKS_PER_SEC;
-    int minutes;
-    int hours;
-    int seconds;
-    seconds = duration;
-    minutes = duration / 60;
-    hours = minutes / 60;
-    minutes = minutes - hours * 60;
-    seconds = seconds - minutes * 60;
+	int duration = (std::clock() - score_time.getStart()) / (int)CLOCKS_PER_SEC;
+	int minutes;
+	int hours;
+	int seconds;
+	seconds = duration;
+	minutes = duration / 60;
+	hours = minutes / 60;
+	minutes = minutes - hours * 60;
+	seconds = seconds - minutes * 60;
 
 	std::ostringstream score;
 	score << "SCORE: " << std::setw(3) << std::setfill('0') << score_time.getScore();
 	sc.first = score.str().c_str();
 
 	std::ostringstream t;
-	t << "TIME: "	<< std::setw(2) << std::setfill('0') << hours << ":"
-					<< std::setw(2) << std::setfill('0') << minutes << ":"
-					<< std::setw(2) << std::setfill('0') << seconds;
+	t << "TIME: " << std::setw(2) << std::setfill('0') << hours << ":"
+	  << std::setw(2) << std::setfill('0') << minutes << ":"
+	  << std::setw(2) << std::setfill('0') << seconds;
 	sc.second = t.str().c_str();
 }
 
@@ -178,24 +177,37 @@ void SFML::drowScore(Score_Time &score_time)
 
 	sf::Text text;
 	text.setFont(_font);
-
 	text.setCharacterSize(24);
 	text.setFillColor(sf::Color::White);
 	text.setStyle(sf::Text::Bold);
 
-	if (this->_endGame) {
+	if (this->_endGame)
+	{
+		int x = _window.getSize().x;
+		int y = _window.getSize().y;
+		text.setPosition(x / 2 - 160 , y / 2 - 30);
+		text.setCharacterSize(48);
+		text.setFillColor(sf::Color::Red);
+		text.setStyle(sf::Text::Bold | sf::Text::Underlined);
+
 		text.setString("GAME OVER\n" + sc.first + "\n" + sc.second);
 		_window.draw(text);
 		_window.display();
 
 		sf::Event event;
-		_window.pollEvent(event);
-		while (!(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) || event.type != sf::Event::Closed))
-			_window.pollEvent(event);
-
+		bool esq = true;
+		while (_window.pollEvent(event)) 
+		{
+			while (esq)
+			{
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+					esq = false;
+			}
+		}
 		_window.close();
 	}
-	else {
+	else
+	{
 		text.setString(sc.first + "\t" + sc.second);
 		_window.draw(text);
 	}
