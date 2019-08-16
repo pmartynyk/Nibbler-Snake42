@@ -13,7 +13,7 @@
 
 class Game
 {
-  private:
+  private: 
     int _size;
     IDynamicLibrary *_library;
     IMusic *_music;

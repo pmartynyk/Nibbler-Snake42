@@ -32,20 +32,22 @@ SRC_DIR = ./src/
 OBJ_DIR = ./objects/
 
 SRCF = $(addprefix $(SRC_DIR), $(SRC))
-LIBF = $(addprefix $(LIBS_DIR), $(LIBS))
+LIBF = $(addprefix $(LIBS_DIR), $(LIB))
 OBJF = $(addprefix $(OBJ_DIR), $(OBJ))
 
 all: mkdir $(NAME)
-
+	@:
+	
 mkdir:
 	@mkdir -p $(OBJ_DIR)
 
-$(OBJ_DIR)%.o: $(SRC_DIR)%.cpp 
-	@$(CLANG) $(FLAG) -c $< -o $@ -I$(LIBS_DIR)
 
 $(NAME): $(OBJF) $(LIBF) ncur sdl sfml mus
 	@$(CLANG) $(FLAG) $(OBJF) -o $(NAME) 
 	@echo "\033[32mDONE\033[39m"
+
+$(OBJ_DIR)%.o: $(SRC_DIR)%.cpp #$(LIBS_DIR)%.hpp
+	@$(CLANG) $(FLAG) -c $< -o $@ -I$(LIBS_DIR)
 
 mus:
 	@make -C ./music/

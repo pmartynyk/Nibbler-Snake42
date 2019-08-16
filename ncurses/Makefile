@@ -22,7 +22,8 @@ OBJ		= $(SRC:.cpp=.o)
 OBJ_DIR = ./objects/
 
 all: $(NAME)
-
+	@:
+	
 $(OBJ_DIR)%.o: %.cpp %.hpp
 	@$(CLANG) $(FLAG) -c $< -o $@ -I../includes
 

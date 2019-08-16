@@ -14,7 +14,8 @@ SRC		= Music.class.cpp
 OBJ		= $(SRC:.cpp=.o)
 
 all: $(NAME)
-
+	@:
+	
 $(OBJ_DIR)%.o: %.cpp %.hpp
 	@$(CLANG) $(FLAG) -c $< -o $@ -I../includes
 

@@ -1,6 +1,6 @@
 #include "../includes/Game.class.hpp"
 
-Game::Game(int size) : _size(size), _library(nullptr), _endGame(false), _fps(5), _direction(down), _event(ncurses), _changeLibrary(false), _move(true)
+Game::Game(int size) : _size(size), _library(nullptr), _endGame(false), _fps(5), _direction(down), _event(sfml), _changeLibrary(false), _move(true)
 {
 }
 
@@ -39,6 +39,7 @@ void Game::play(void)
     clock_t t2 = 0;
     setMusic();
     selectLib();
+
     this->_snake.setData(this->_size / 2, this->_size / 2, 4);
     srand((int)time(0));
     while (!this->_endGame)
@@ -56,6 +57,10 @@ void Game::play(void)
             this->_move = true;            
         }
     }
+    if (this->_library != nullptr)
+    {
+        delete(this->_library);
+    }     
 }
 
 void Game::setMusic(void)

@@ -27,13 +27,13 @@ OBJ_FILES	= 	$(SRC_FILES:.cpp=.o)
 SDL2 		=	SDL2
 
 all: sdl $(NAME)
-
+	@:
+	
 $(NAME): $(OBJ_FILES)
 	@ $(COM) $(FLAGS) $(SDL_FRM) $(SDL_LINK) $(LIB_FLAG) $(OBJ_FILES) -o $(NAME)
 
 %.o:%.cpp %.hpp
-	@ $(COM) $(FLAGS) $(SDL_FRM) -c -o $@ $< -I $(INC_DIR)
-
+	@ $(COM) $(FLAGS) $(SDL_FRM) -c $< -o $@  -I $(INC_DIR)
 
 sdl:
 	@ mkdir -p $(SDL_DIR)

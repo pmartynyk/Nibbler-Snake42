@@ -33,6 +33,9 @@ SFML::SFML(void) : _window(), _font(), _endGame(false)
 
 SFML::~SFML(void)
 {
+	_window.close();
+	_window.clear();
+	system("reset");
 }
 
 void SFML::draw(Snake &snake, int size, Food &food, Score_Time &score_time, bool &endGame)
@@ -40,6 +43,7 @@ void SFML::draw(Snake &snake, int size, Food &food, Score_Time &score_time, bool
 	if (endGame)
 	{
 		this->_endGame = endGame;
+		_window.display();
 		this->drowScore(score_time);
 
 		_window.clear();
@@ -196,11 +200,13 @@ void SFML::drowScore(Score_Time &score_time)
 
 		sf::Event event;
 		bool esq = true;
-		while (_window.pollEvent(event)) 
+
+		_window.pollEvent(event);
+		while (esq) 
 		{
-			while (esq)
+			while (_window.pollEvent(event))
 			{
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) || event.type == sf::Event::Closed)
 					esq = false;
 			}
 		}

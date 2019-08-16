@@ -24,6 +24,8 @@ Snake &Snake::operator=(Snake const &val)
 
 Snake::~Snake(void)
 {
+    for (auto it : this->_units)
+        delete it;
 }
 
 void Snake::setData(int x, int y, int length)

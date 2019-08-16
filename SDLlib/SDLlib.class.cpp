@@ -42,6 +42,7 @@ SDLlib::~SDLlib(void) {
 void SDLlib::draw(Snake &snake, int size, Food &food, Score_Time &score_time, bool &endGame)
 {
 	if (endGame) {
+		SDL_RenderPresent(_renderer);
 		this->_endGame = endGame;
 		this->drowScore(score_time);
 	}
@@ -186,12 +187,14 @@ void SDLlib::drowScore(Score_Time &score_time)
 		pos = { _size / 2 * 16 - (texW / 2), (_size - 1) / 2 * 16, texW, texH };
 		SDL_RenderCopy(_renderer, texture, NULL, &pos);
 
+		SDL_FreeSurface(surface);
 		surface = TTF_RenderText_Solid(_font, sc.first.c_str(), _colour);
 		texture = SDL_CreateTextureFromSurface(_renderer, surface);
 		SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
 		pos.y += 20;
 		SDL_RenderCopy(_renderer, texture, NULL, &pos);
 
+		SDL_FreeSurface(surface);
 		surface = TTF_RenderText_Solid(_font, sc.second.c_str(), _colour);
 		texture = SDL_CreateTextureFromSurface(_renderer, surface);
 		SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
@@ -204,6 +207,8 @@ void SDLlib::drowScore(Score_Time &score_time)
 		while (!((e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE) || e.type == SDL_QUIT))
 			SDL_PollEvent( &e );
 	}
+	SDL_FreeSurface(surface);
+	// SDL_FreeTexture
 }
 
 Direction SDLlib::checkButton(Direction direction, bool &endGame, Event &event, bool &changeLibrary, bool &move)
