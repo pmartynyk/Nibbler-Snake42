@@ -1,6 +1,6 @@
 #include "../includes/Game.class.hpp"
 
-Game::Game(int size) : _size(size), _library(nullptr), _endGame(false), _fps(5), _direction(down), _event(sfml), _changeLibrary(false), _move(true)
+Game::Game(int size) : _size(size), _library(nullptr), _endGame(false), _fps(5), _direction(down), _event(ncurses), _changeLibrary(false), _move(true)
 {
 }
 
